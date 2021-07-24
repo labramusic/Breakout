@@ -13,7 +13,7 @@ namespace breakout
 	class Entity
 	{
 	public:		
-		Entity(EntityID id) : id(id) {}
+		//Entity(EntityID id) : id(id) {}
 		Entity(EntityID id, std::string tag) : id(id), tag(std::move(tag)) {}
 
 		EntityID getId() const { return id; }

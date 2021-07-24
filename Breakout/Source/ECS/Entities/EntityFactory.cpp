@@ -13,7 +13,7 @@ namespace breakout
 {
 	Entity& EntityFactory::createPaddle() const
 	{
-		auto& paddleEntity(manager->createEntity("paddle"));
+		Entity& paddleEntity(manager->createEntity("paddle"));
 		const auto w = Game::instance().getWindowWidth();
 		manager->addComponent<TransformComponent>(paddleEntity, (w-90.f)/2, 610.f, 90.f, 15.f);
 		manager->addComponent<MoveComponent>(paddleEntity, 4);

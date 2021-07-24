@@ -7,18 +7,26 @@
 
 #include "Entity.hpp"
 #include <ECS/Components/Component.hpp>
+//#include "EntityFactory.hpp"
+
+#include <iostream>
 
 namespace breakout
 {	
 	class EntityManager
 	{
+		friend class EntityFactory;
+
 	public:
 		EntityManager() : nextId(1) {}
 
 		~EntityManager()
 		{
+			std::cout << "calling destructor of entity manager" << std::endl;
+
 			for (auto& entity : entities)
 			{
+				if (!entity) continue;
 				for (auto it = componentsByClass.begin(); it != componentsByClass.end(); ++it) {
 					auto entityComponent = it->second.find(entity->getId());
 					if (entityComponent != it->second.end())
@@ -29,25 +37,6 @@ namespace breakout
 
 				entities[entity->getId()].reset();
 			}
-		}
-		
-
-		Entity& createEntity(const std::string& tag)
-		{
-			const auto id = generateNewId();
-			auto* entity = new Entity(id, tag);
-			std::unique_ptr<Entity> uPtr{ entity };
-			entities[id] = std::move(uPtr);
-			return *entity;
-		}
-		
-		Entity& createEntity()
-		{
-			const auto id = generateNewId();
-			auto* entity = new Entity(id);
-			std::unique_ptr<Entity> uPtr{ entity };
-			entities[id] = std::move(uPtr);
-			return *entity;
 		}
 
 		Entity* getEntityByTag(const std::string& tag)
@@ -71,26 +60,6 @@ namespace breakout
 			}
 
 			entities[entity.getId()]->active = false;
-		}
-
-		template <typename C, typename... CArgs>
-		C& addComponent(Entity& entity, CArgs&&... cArgs)
-		{
-			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
-			assert(!hasComponent<C>(entity));
-
-			auto cId = Component::getComponentTypeID<C>();
-			if (componentsByClass.find(cId) == componentsByClass.end())
-			{
-				componentsByClass[cId] = std::unordered_map<EntityID, std::unique_ptr<Component>>{};
-			}
-			
-			C* component(new C(std::forward<CArgs>(cArgs)...));
-
-			std::unique_ptr<Component> uPtr{ component };
-			componentsByClass[cId][entity.getId()] = std::move(uPtr);
-			
-			return *component;
 		}
 
 		template <typename C>
@@ -132,7 +101,6 @@ namespace breakout
 			return entitiesWithComponent;
 		}
 
-
 		void refresh()
 		{
 			for (auto& entity : entities)
@@ -163,6 +131,35 @@ namespace breakout
 
 			// no available ids
 			return 0;
+		}
+
+		Entity& createEntity(const std::string& tag = "")
+		{
+			const EntityID id = generateNewId();
+			Entity* entity = new Entity(id, tag);
+			std::unique_ptr<Entity> uPtr{ entity };
+			entities[id] = std::move(uPtr);
+			return *entity;
+		}
+
+		template <typename C, typename... CArgs>
+		C& addComponent(Entity& entity, CArgs&&... cArgs)
+		{
+			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
+			assert(!hasComponent<C>(entity));
+
+			auto cId = Component::getComponentTypeID<C>();
+			if (componentsByClass.find(cId) == componentsByClass.end())
+			{
+				componentsByClass[cId] = std::unordered_map<EntityID, std::unique_ptr<Component>>{};
+			}
+
+			C* component(new C(std::forward<CArgs>(cArgs)...));
+
+			std::unique_ptr<Component> uPtr{ component };
+			componentsByClass[cId][entity.getId()] = std::move(uPtr);
+
+			return *component;
 		}
 	};
 }

@@ -44,7 +44,7 @@ namespace breakout
 
 	void AssetManager::Draw(const std::string tId, SDL_Rect src, SDL_Rect dest)
 	{
-		SDL_RenderCopy(&Game::instance().getRenderer(), Game::instance().getAssetManager().getTexture(tId), &src, &dest);
+		SDL_RenderCopy(&Game::instance().getRenderer(), getTexture(tId), &src, &dest);
 	}
 
 	void AssetManager::DrawBackground(const std::string tId)
@@ -59,7 +59,7 @@ namespace breakout
 
 	SDL_Texture* AssetManager::CreateTextureFromText(const std::string& fontId, const std::string& text, const SDL_Color color)
 	{
-		SDL_Surface* surf = TTF_RenderText_Blended(Game::instance().getAssetManager().getFont(fontId), text.c_str(), color);
+		SDL_Surface* surf = TTF_RenderText_Blended(getFont(fontId), text.c_str(), color);
 		SDL_Texture* texture = SDL_CreateTextureFromSurface(&Game::instance().getRenderer(), surf);
 		SDL_FreeSurface(surf);
 		return texture;

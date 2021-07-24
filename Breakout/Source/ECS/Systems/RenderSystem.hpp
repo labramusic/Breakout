@@ -8,7 +8,8 @@ namespace breakout
 	{
 	public:
 		RenderSystem(EntityManager& entityManager) : System(entityManager) {}
-		RenderSystem() : System() {}
+		//RenderSystem() : System() {}
+		virtual ~RenderSystem() {}
 		
 		void update();
 	};

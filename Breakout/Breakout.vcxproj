@@ -164,6 +164,7 @@
     <ClInclude Include="Source\Level.hpp" />
     <ClInclude Include="Source\Scenes\SceneGameplay.hpp" />
     <ClInclude Include="Source\Scenes\Scene.hpp" />
+    <ClInclude Include="Source\Scenes\SceneMain.hpp" />
     <ClInclude Include="Source\Scenes\SceneManager.hpp" />
     <ClInclude Include="Source\Vector2D.hpp" />
   </ItemGroup>
@@ -173,10 +174,14 @@
     <ClCompile Include="Source\ECS\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Source\ECS\Systems\MovementSystem.cpp" />
     <ClCompile Include="Source\ECS\Systems\RenderSystem.cpp" />
+    <ClCompile Include="Source\ECS\Systems\System.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\Level.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Scenes\Scene.cpp" />
     <ClCompile Include="Source\Scenes\SceneGameplay.cpp" />
+    <ClCompile Include="Source\Scenes\SceneMain.cpp" />
+    <ClCompile Include="Source\Scenes\SceneManager.cpp" />
     <ClCompile Include="Source\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -12,12 +12,12 @@ namespace breakout
 		SDL_Rect srcRect, destRect;
 		srcRect.x = srcRect.y = 0;
 
-		auto entities = entityManager->getEntitiesWithComponent<TransformComponent>();
+		auto entities = entityManager.getEntitiesWithComponent<TransformComponent>();
 		for (auto const& entity : entities)
 		{
-			const auto& transform = entityManager->getComponent<TransformComponent>(*entity);
-			if (!entityManager->hasComponent<RenderComponent>(*entity)) continue;
-			const auto& render = entityManager->getComponent<RenderComponent>(*entity);
+			const auto& transform = entityManager.getComponent<TransformComponent>(*entity);
+			if (!entityManager.hasComponent<RenderComponent>(*entity)) continue;
+			const auto& render = entityManager.getComponent<RenderComponent>(*entity);
 
 			srcRect.w = transform.width;
 			srcRect.h = transform.height;
@@ -27,6 +27,8 @@ namespace breakout
 			destRect.w = transform.width * transform.scale;
 			destRect.h = transform.height * transform.scale;
 
+			// TODO ref
+			// tko crta tu ??? system bi trebao
 			Game::instance().getAssetManager().Draw(render.tId, srcRect, destRect);
 		}
 	}

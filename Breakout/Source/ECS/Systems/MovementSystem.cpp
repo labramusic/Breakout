@@ -1,18 +1,21 @@
 ﻿#include "MovementSystem.hpp"
+#include <SDL_events.h>
+#include "System.hpp"
 #include <ECS/Components/TransformComponent.hpp>
-
 #include <ECS/Components/MoveComponent.hpp>
-
 #include "Game.hpp"
 
 namespace breakout
 {
 	void MovementSystem::update(double time)
 	{
+		// TODO for each entity with move component apply movement
+		// depending on transform component, clamp, bounciness etc.
+
 		// move paddle
-		const auto* paddle = entityManager->getEntityByTag("paddle");
-		auto& paddleTransform = entityManager->getComponent<TransformComponent>(*paddle);
-		auto& paddleMove = entityManager->getComponent<MoveComponent>(*paddle);
+		const auto* paddle = entityManager.getEntityByTag("paddle");
+		auto& paddleTransform = entityManager.getComponent<TransformComponent>(*paddle);
+		auto& paddleMove = entityManager.getComponent<MoveComponent>(*paddle);
 
 		if (movingLeft) paddleMove.velocity.x = -1;
 		else if (movingRight) paddleMove.velocity.x = 1;
@@ -27,9 +30,9 @@ namespace breakout
 
 		
 		// move ball
-		const auto* ball = entityManager->getEntityByTag("ball");
-		auto& ballTransform = entityManager->getComponent<TransformComponent>(*ball);
-		auto& ballMove = entityManager->getComponent<MoveComponent>(*ball);
+		const auto* ball = entityManager.getEntityByTag("ball");
+		auto& ballTransform = entityManager.getComponent<TransformComponent>(*ball);
+		auto& ballMove = entityManager.getComponent<MoveComponent>(*ball);
 		ballTransform.position += ballMove.movementSpeed * ballMove.velocity.Normalize() * time;
 
 		// hits borders
@@ -47,14 +50,14 @@ namespace breakout
 		{
 			resetPositions();
 			
-			--scene->lives;
-			if (scene->lives == 0)
+			--gameplayScene->lives;
+			if (gameplayScene->lives == 0)
 			{
-				scene->gameOver();
+				gameplayScene->gameOver();
 			}
 			else
 			{
-				scene->updateHUD("livesHUD", "Lives: " + std::to_string(scene->lives));
+				gameplayScene->updateHUD("livesHUD", "Lives: " + std::to_string(gameplayScene->lives));
 			}
 		}
 
@@ -62,12 +65,13 @@ namespace breakout
 
 	void MovementSystem::resetPositions()
 	{
-		auto& paddle = entityManager->getComponent<TransformComponent>(*entityManager->getEntityByTag("paddle"));
-		auto& ball = entityManager->getComponent<TransformComponent>(*entityManager->getEntityByTag("ball"));
+		auto& paddle = entityManager.getComponent<TransformComponent>(*entityManager.getEntityByTag("paddle"));
+		auto& ball = entityManager.getComponent<TransformComponent>(*entityManager.getEntityByTag("ball"));
 		paddle.position = paddle.initialPos;
 		ball.position = ball.initialPos;
 	}
 
+	// input system/component ?
 	void MovementSystem::onEvent(const SDL_Event& event)
 	{
 		if (event.type == SDL_KEYDOWN)

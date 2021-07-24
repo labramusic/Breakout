@@ -33,6 +33,7 @@ namespace breakout
 		
 		Vector2D position;
 		Vector2D initialPos;
+		// rotation
 
 		int width = 30;
 		int height = 30;

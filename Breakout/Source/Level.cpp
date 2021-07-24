@@ -1,4 +1,5 @@
 ﻿#include "Level.hpp"
+#include <iostream>
 
 namespace breakout
 {
@@ -10,5 +11,6 @@ namespace breakout
 		
 		delete[] layout;
 		layout = nullptr;
+		std::cout << "calling destructor of level" << std::endl;
 	}
 }

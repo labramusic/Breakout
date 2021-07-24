@@ -7,10 +7,12 @@ namespace breakout
 	class System
 	{
 	public:
-		System(EntityManager& entityManager) : entityManager(&entityManager) {}
-		System() = default;
+		virtual ~System() = 0;
 
 	protected:
-		EntityManager* entityManager;
+		System(EntityManager& entityManager) : entityManager(entityManager) {}
+		//System() = default;
+
+		EntityManager &entityManager;
 	};
 }

@@ -11,14 +11,19 @@ namespace breakout
 {
 	void CollisionSystem::update(double time)
 	{
-		const auto& ball = entityManager->getEntityByTag("ball");
-		auto& ballTransform = entityManager->getComponent<TransformComponent>(*ball);
+		// TODO get each entity with appropriate components and apply logic 
+		// npr za laser i ship dohvati sve asteroide pa provjeravaj if coll
 
-		auto entities = entityManager->getEntitiesWithComponent<TransformComponent>();
+		// collision data components za lakse izracunavanje ?
+
+		const auto& ball = entityManager.getEntityByTag("ball");
+		auto& ballTransform = entityManager.getComponent<TransformComponent>(*ball);
+
+		auto entities = entityManager.getEntitiesWithComponent<TransformComponent>();
 		for (auto const& entity : entities)
 		{
-			auto& otherTransform = entityManager->getComponent<TransformComponent>(*entity);
-			auto& ballMove = entityManager->getComponent<MoveComponent>(*ball);
+			auto& otherTransform = entityManager.getComponent<TransformComponent>(*entity);
+			auto& ballMove = entityManager.getComponent<MoveComponent>(*ball);
 			if (entity->getTag() == "brick")
 			{
 				if (checkBallCollision(ballTransform, otherTransform))
@@ -26,17 +31,17 @@ namespace breakout
 					handleBallCollisionWithBrick(ballTransform, ballMove, otherTransform);
 
 					// TODO refactor with observer pattern
-					auto& brickComponent = entityManager->getComponent<BrickComponent>(*entity);
+					auto& brickComponent = entityManager.getComponent<BrickComponent>(*entity);
 					// -1 reserved for impenetrable
 					if (brickComponent.hitPoints > 0) 
 						--brickComponent.hitPoints;
 					if (brickComponent.hitPoints == 0)
 					{
 						// increase score
-						scene->score += brickComponent.brickType->breakScore;
-						scene->updateHUD("scoreHUD", "Score: " + std::to_string(scene->score));
+						gameplayScene->score += brickComponent.brickType->breakScore;
+						gameplayScene->updateHUD("scoreHUD", "Score: " + std::to_string(gameplayScene->score));
 
-						entityManager->removeEntity(*entity);
+						entityManager.removeEntity(*entity);
 						break;
 					}
 				}
@@ -49,16 +54,16 @@ namespace breakout
 		}
 
 		// if there are bricks other than impenetrable remaining
-		auto bricks = entityManager->getEntitiesWithComponent<BrickComponent>();
+		auto bricks = entityManager.getEntitiesWithComponent<BrickComponent>();
 		for (auto* brick : bricks)
 		{
-			if (entityManager->getComponent<BrickComponent>(*brick).brickType->hitPoints != -1)
+			if (entityManager.getComponent<BrickComponent>(*brick).brickType->hitPoints != -1)
 			{
 				return;
 			}
 		}
 		
-		scene->nextLevel();
+		gameplayScene->nextLevel();
 	}
 
 	void CollisionSystem::onEvent(const SDL_Event& event)

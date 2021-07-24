@@ -4,7 +4,8 @@
 
 #include "Scenes/Scene.hpp"
 #include "SceneGameplay.hpp"
-
+#include "SceneMain.hpp"
+//#include "Game.hpp"
 
 namespace breakout
 {
@@ -13,21 +14,16 @@ namespace breakout
 	public:
 		enum SceneName { Main, Gameplay, GameOver };
 
-		SceneManager()
-		{
-			//Scene* main = new SceneMain();
-			//Scene* gameOver = new SceneGameOver();
-
-			Scene* gameplay = new SceneGameplay();
-			addScene(Gameplay, *gameplay);
-
-			// start with main scene
-			activeScene = scenes[Gameplay];
-			activeScene->loadScene();
-		}
+		SceneManager();
 
 		~SceneManager()
 		{
+			std::cout << "calling destructor of scene manager" << std::endl;
+
+			for (auto it = systems.begin(); it != systems.end(); ++it) {
+				delete *it;
+			}
+
 			for (auto it = scenes.begin(); it != scenes.end(); ++it) {
 				delete it->second;
 			}
@@ -51,17 +47,24 @@ namespace breakout
 		void changeScene(const SceneName newScene)
 		{
 			activeScene->unloadScene();
-			scenes[newScene]->loadScene();
 			activeScene = scenes[newScene];
+			activeScene->loadScene();
 		}
+
+		//Scene& getActiveScene() const { return *activeScene; }
 		
 	private:
-		Scene* activeScene;
+		//Game &game;
+
+		Scene *activeScene;
 		std::unordered_map<SceneName, Scene*> scenes;
+
+		std::vector<System*> systems;
 		
-		void addScene(SceneName name, Scene& scene)
-		{
-			scenes.emplace(name, &scene);
-		}
+		// shared_ptr ?
+		//void addScene(SceneName name, Scene &scene)
+		//{
+		//	scenes.emplace(name, &scene);
+		//}
 	};
 }

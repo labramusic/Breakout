@@ -3,14 +3,20 @@
 #define SDL_MAIN_HANDLED
 
 #include <SDL_render.h>
+#include <SDL_events.h>
 
 #include "AssetManager.hpp"
-#include "Scenes/SceneManager.hpp"
+//#include "Scenes/SceneManager.hpp"
+#include "ECS/Entities/EntityManager.hpp"
+#include "ECS/Entities/EntityFactory.hpp"
 
 namespace breakout
 {
+	class SceneManager;
+
 	class Game {
 	public:
+		//Game();
 		~Game();
 
 		static Game& instance()
@@ -19,8 +25,11 @@ namespace breakout
 			return *instance;
 		}
 
-		void init(const char* title, int xpos, int ypos, int width, int height, Uint32 flags);
+		// Initialize
+		bool init(const char* title, int xpos, int ypos, int width, int height);
+		// RunLoop
 		int run();
+		// Shutdown
 		void clean();
 
 		// shared context
@@ -28,21 +37,26 @@ namespace breakout
 		int getWindowWidth() const { return windowWidth; }
 		int getWindowHeight() const { return windowHeight; }
 		SDL_Renderer& getRenderer() const { return *renderer; }
+
 		AssetManager& getAssetManager() const { return *assetManager; }
 		EntityManager& getEntityManager() const { return *entityManager; }
+		EntityFactory& getEntityFactory() const { return *entityFactory; }
 		SceneManager& getSceneManager() const { return *sceneManager; }
 		//
 		
 	private:
 		Game();
 		
+		// ProcessInput
 		void handleEvents();
+		// UpdateGame
 		void update(double time);
+		// GenerateOutput
 		void render();
 
 		int windowWidth;
 		int windowHeight;
-		bool running;
+		bool isRunning;
 		SDL_Event event;
 		
 		//
@@ -50,6 +64,7 @@ namespace breakout
 		SDL_Renderer* renderer;
 		AssetManager* assetManager;
 		EntityManager* entityManager;
+		EntityFactory* entityFactory;
 		SceneManager* sceneManager;
 		// 
 	};

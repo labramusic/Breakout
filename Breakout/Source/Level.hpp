@@ -12,10 +12,8 @@ namespace breakout
 	class Level
 	{
 	public:
-		Level(std::string levelId) : levelId(std::move(levelId)), rowCount(0), colCount(0), rowSpacing(0), colSpacing(0)
+		Level(std::string levelId) : levelId(std::move(levelId)), rowCount(0), colCount(0), rowSpacing(0), colSpacing(0), blockWidth(30.f), blockHeight(30.f)
 		{
-			blockWidth = 30.f;
-			blockHeight = 30.f;
 		}
 
 		~Level();

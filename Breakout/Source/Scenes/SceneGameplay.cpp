@@ -3,23 +3,46 @@
 #include "Game.hpp"
 #include "ECS/Components/BrickComponent.hpp"
 #include "ECS/Components/TextComponent.hpp"
+#include "ECS/Systems/MovementSystem.hpp"
+#include "ECS/Systems/CollisionSystem.hpp"
 
 namespace breakout
 {
-	SceneGameplay::SceneGameplay()
+	SceneGameplay::SceneGameplay(MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) : 
+		Scene(renderSystem), movementSystem(movementSystem), collisionSystem(collisionSystem)
 	{
-		entityFactory = EntityFactory(Game::instance().getEntityManager());
-		renderSystem = RenderSystem(Game::instance().getEntityManager());
-		movementSystem = MovementSystem(Game::instance().getEntityManager(), *this);
-		collisionSystem = CollisionSystem(Game::instance().getEntityManager(), *this);
-
 		levels.push_back(new Level("1"));
 		levels.push_back(new Level("2"));
 		levels.push_back(new Level("3"));
 	}
 
+	SceneGameplay::~SceneGameplay()
+	{
+		std::cout << "calling destructor of scene gameplay" << std::endl;
+
+		for (auto it = levels.begin(); it != levels.end(); ++it) {
+			delete *it;
+		}
+	}
+
 	void SceneGameplay::handleEvent(const SDL_Event& event)
 	{
+		if (event.type == SDL_KEYUP)
+		{
+			if (event.key.keysym.sym == SDLK_SPACE)
+			{
+				// skip level
+				nextLevel();
+			}
+			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				SDL_Event sdlevent;
+				sdlevent.type = SDL_QUIT;
+				SDL_PushEvent(&sdlevent);
+			}
+		}
+		//
+
 		movementSystem.onEvent(event);
 	}
 	
@@ -31,6 +54,7 @@ namespace breakout
 
 	void SceneGameplay::render()
 	{
+		// TODO once?
 		Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
 		
 		renderSystem.update();
@@ -40,6 +64,7 @@ namespace breakout
 	{
 		loadLevel();
 
+		EntityFactory& entityFactory = Game::instance().getEntityFactory();
 		entityFactory.createPaddle();
 		entityFactory.createBall();
 
@@ -55,14 +80,8 @@ namespace breakout
 
 	void SceneGameplay::unloadScene()
 	{
-		auto& entityManager = Game::instance().getEntityManager();
-		for (auto const& entity : entityManager.getEntitiesWithComponent<TransformComponent>())
-		{
-			entityManager.removeEntity(*entity);
-		}
-		entityManager.refresh();
+		Game::instance().getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
 	}
-
 
 	void SceneGameplay::loadLevel()
 	{
@@ -89,7 +108,7 @@ namespace breakout
 					continue;
 				auto& brickType = level->brickTypes[brickId];
 
-				entityFactory.createBrick(*brickType, xpos, ypos, level->blockWidth, level->blockHeight);
+				Game::instance().getEntityFactory().createBrick(*brickType, xpos, ypos, level->blockWidth, level->blockHeight);
 			}
 		}
 	}
@@ -97,12 +116,7 @@ namespace breakout
 	void SceneGameplay::unloadLevel()
 	{
 		// remove bricks
-		auto& entityManager = Game::instance().getEntityManager();
-		for (auto const& entity : entityManager.getEntitiesWithComponent<BrickComponent>())
-		{
-			entityManager.removeEntity(*entity);
-		}
-		entityManager.refresh();
+		Game::instance().getEntityFactory().destroyEntitiesWithComponent<BrickComponent>();
 	}
 
 	void SceneGameplay::nextLevel()
@@ -121,22 +135,25 @@ namespace breakout
 		}
 	}
 
+	void SceneGameplay::updateHUD(const std::string& tag, const std::string& text)
+	{
+		const Entity& elementHUD = *Game::instance().getEntityManager().getEntityByTag(tag);
+
+		TextComponent& textC = Game::instance().getEntityManager().getComponent<TextComponent>(elementHUD);
+		textC.text = text;
+
+		TransformComponent& livesTr = Game::instance().getEntityManager().getComponent<TransformComponent>(elementHUD);
+		SDL_Texture* tex = Game::instance().getAssetManager().CreateTextureFromText(textC.fontId, textC.text, textC.textColor);
+		// get texture width and height
+		SDL_QueryTexture(tex, nullptr, nullptr, &livesTr.width, &livesTr.height);
+		// update text texture
+		Game::instance().getAssetManager().addTexture(elementHUD.getTag(), *tex);
+	}
+
 	void SceneGameplay::gameOver()
 	{
 		currentLevelIndex = 0;
 		unloadScene();
 		loadScene();
-	}
-
-	void SceneGameplay::updateHUD(const std::string& tag, const std::string& text)
-	{
-		const auto& elementHUD = Game::instance().getEntityManager().getEntityByTag(tag);
-		auto& textC = Game::instance().getEntityManager().getComponent<TextComponent>(*elementHUD);
-		textC.text = text;
-		SDL_Texture* tex = Game::instance().getAssetManager().CreateTextureFromText(textC.fontId, textC.text, textC.textColor);
-		auto& livesTr = Game::instance().getEntityManager().getComponent<TransformComponent>(*elementHUD);
-		// get texture width and height
-		SDL_QueryTexture(tex, nullptr, nullptr, &livesTr.width, &livesTr.height);
-		Game::instance().getAssetManager().addTexture(elementHUD->getTag(), *tex);
 	}
 }
