@@ -1,14 +1,14 @@
 ﻿#pragma once
 
 #include "EntityManager.hpp"
-#include <BrickType.hpp>
+#include <SDL.h>
 #include <SDL_pixels.h>
-
 #include <cassert>
-#include "ECS/Components/Component.hpp"
 
 namespace breakout
 {
+	class BrickType;
+
 	class EntityFactory
 	{
 	public:

@@ -1,12 +1,20 @@
 ﻿#include "RenderSystem.hpp"
 
+#include <ECS/Entities/EntityManager.hpp>
 #include <ECS/Components/TransformComponent.hpp>
 #include <ECS/Components/RenderComponent.hpp>
+#include <Game.hpp>
+#include <AssetManager.hpp>
 
-#include "Game.hpp"
 
 namespace breakout
 {
+	RenderSystem::RenderSystem(EntityManager& entityManager) : System(entityManager) 
+	{
+	}
+
+	RenderSystem::~RenderSystem() {}
+
 	void RenderSystem::update()
 	{
 		SDL_Rect srcRect, destRect;

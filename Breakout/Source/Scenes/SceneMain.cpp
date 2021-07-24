@@ -1,8 +1,11 @@
 #include "SceneMain.hpp"
 
-#include "Game.hpp"
+#include <Game.hpp>
+#include <ECS/Entities/EntityFactory.hpp>
+#include <ECS/Components/TransformComponent.hpp>
+#include <ECS/Systems/RenderSystem.hpp>
+
 #include "SceneManager.hpp"
-#include "ECS/Components/TransformComponent.hpp"
 
 namespace breakout
 {

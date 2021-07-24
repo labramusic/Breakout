@@ -7,7 +7,6 @@
 
 #include "Entity.hpp"
 #include <ECS/Components/Component.hpp>
-//#include "EntityFactory.hpp"
 
 #include <iostream>
 

@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Vector2D.hpp"
-
 #include "Component.hpp"
+#include <Vector2D.hpp>
 
 namespace breakout
 {
-
 	class TransformComponent : public Component
 	{
 	public:

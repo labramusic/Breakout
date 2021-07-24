@@ -1,17 +1,15 @@
 ﻿#pragma once
 
-#define SDL_MAIN_HANDLED
-
 #include <SDL_render.h>
 #include <SDL_events.h>
 
-#include "AssetManager.hpp"
-//#include "Scenes/SceneManager.hpp"
-#include "ECS/Entities/EntityManager.hpp"
-#include "ECS/Entities/EntityFactory.hpp"
+#define SDL_MAIN_HANDLED
 
 namespace breakout
 {
+	class AssetManager;
+	class EntityManager;
+	class EntityFactory;
 	class SceneManager;
 
 	class Game {

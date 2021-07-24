@@ -1,10 +1,15 @@
 ﻿#include "SceneGameplay.hpp"
 
-#include "Game.hpp"
-#include "ECS/Components/BrickComponent.hpp"
-#include "ECS/Components/TextComponent.hpp"
-#include "ECS/Systems/MovementSystem.hpp"
-#include "ECS/Systems/CollisionSystem.hpp"
+#include <Game.hpp>
+#include <AssetManager.hpp>
+#include <ECS/Components/TransformComponent.hpp>
+#include <ECS/Components/BrickComponent.hpp>
+#include <ECS/Components/TextComponent.hpp>
+#include <ECS/Systems/MovementSystem.hpp>
+#include <ECS/Systems/CollisionSystem.hpp>
+#include <ECS/Systems/RenderSystem.hpp>
+#include <ECS/Entities/EntityFactory.hpp>
+#include <Level.hpp>
 
 namespace breakout
 {

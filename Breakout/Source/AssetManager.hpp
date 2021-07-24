@@ -1,11 +1,15 @@
 ﻿#pragma once
 
-#include <map>
+#include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "Level.hpp"
+
+#include <map>
+#include <string>
 
 namespace breakout
 {
+	class Level;
+
 	class AssetManager
 	{
 	public:

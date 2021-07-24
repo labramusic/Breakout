@@ -1,55 +1,25 @@
 ﻿#pragma once
 
 #include <unordered_map>
-
-#include "Scenes/Scene.hpp"
-#include "SceneGameplay.hpp"
-#include "SceneMain.hpp"
-//#include "Game.hpp"
+#include <SDL_events.h>
 
 namespace breakout
 {
+	class Scene;
+	class System;
+
 	class SceneManager
 	{
 	public:
 		enum SceneName { Main, Gameplay, GameOver };
 
 		SceneManager();
-
-		~SceneManager()
-		{
-			std::cout << "calling destructor of scene manager" << std::endl;
-
-			for (auto it = systems.begin(); it != systems.end(); ++it) {
-				delete *it;
-			}
-
-			for (auto it = scenes.begin(); it != scenes.end(); ++it) {
-				delete it->second;
-			}
-		}
+		~SceneManager();
 		
-		void update(double time)
-		{
-			activeScene->update(time);
-		}
-
-		void render()
-		{
-			activeScene->render();
-		}
-
-		void handleEvent(const SDL_Event& event)
-		{
-			activeScene->handleEvent(event);
-		}
-
-		void changeScene(const SceneName newScene)
-		{
-			activeScene->unloadScene();
-			activeScene = scenes[newScene];
-			activeScene->loadScene();
-		}
+		void update(double time);
+		void render();
+		void handleEvent(const SDL_Event& event);
+		void changeScene(const SceneName newScene);
 
 		//Scene& getActiveScene() const { return *activeScene; }
 		
@@ -60,11 +30,5 @@ namespace breakout
 		std::unordered_map<SceneName, Scene*> scenes;
 
 		std::vector<System*> systems;
-		
-		// shared_ptr ?
-		//void addScene(SceneName name, Scene &scene)
-		//{
-		//	scenes.emplace(name, &scene);
-		//}
 	};
 }

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
+#include "Component.hpp"
 #include <string>
 #include <utility>
-#include "Component.hpp"
 
 namespace  breakout
 {

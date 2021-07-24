@@ -1,25 +1,19 @@
 ﻿#pragma once
 
-#include <SDL_events.h>
 #include "System.hpp"
-#include "Scenes/SceneGameplay.hpp"
-
-union SDL_Event;
+#include <SDL_events.h>
 
 namespace breakout
 {
-	class System;
 	class EntityManager;
 	class SceneGameplay;
 	
 	class MovementSystem : public System
 	{
 	public:
-		MovementSystem(EntityManager& entityManager) : System(entityManager), gameplayScene(nullptr)
-		{
-		}
+		MovementSystem(EntityManager& entityManager);
 		//MovementSystem() = default;
-		virtual ~MovementSystem() {}
+		virtual ~MovementSystem();
 
 		void update(double time);
 		void onEvent(const SDL_Event& event);

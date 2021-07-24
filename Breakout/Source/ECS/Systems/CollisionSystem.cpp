@@ -1,14 +1,26 @@
 ﻿#include "CollisionSystem.hpp"
-#include "Vector2D.hpp"
-#include "ECS/Components/TransformComponent.hpp"
-#include "ECS/Components/BrickComponent.hpp"
-#include <ECS/Components/TextComponent.hpp>
-#include <cmath>
 
+#include <cmath>
+#include <Vector2D.hpp>
+#include <ECS/Entities/EntityManager.hpp>
+#include <ECS/Components/TransformComponent.hpp>
+#include <ECS/Components/BrickComponent.hpp>
+#include <ECS/Components/TextComponent.hpp>
+#include <ECS/Components/MoveComponent.hpp>
 #include <Game.hpp>
+
+#include <Scenes/SceneGameplay.hpp>
 
 namespace breakout
 {
+	CollisionSystem::CollisionSystem(EntityManager& entityManager) : System(entityManager), gameplayScene(nullptr)
+	{
+	}
+
+	CollisionSystem::~CollisionSystem() 
+	{
+	}
+
 	void CollisionSystem::update(double time)
 	{
 		// TODO get each entity with appropriate components and apply logic 

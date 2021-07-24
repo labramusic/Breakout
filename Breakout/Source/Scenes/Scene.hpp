@@ -1,12 +1,10 @@
 #pragma once
 #include <SDL_events.h>
 
-#include <vector>
-#include "ECS/Systems/System.hpp"
-#include "ECS/Systems/RenderSystem.hpp"
-
 namespace breakout
 {
+	class RenderSystem;
+
 	class Scene
 	{
 	public:

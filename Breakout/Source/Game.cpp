@@ -1,12 +1,14 @@
 ﻿#include "Game.hpp"
-#include <iostream>
-#include <string>
+
+#include "AssetManager.hpp"
+#include "ECS/Entities/EntityManager.hpp"
+#include "ECS/Entities/EntityFactory.hpp"
 #include "Scenes/SceneManager.hpp"
 
 namespace breakout
 {
 	Game::Game() : windowWidth(0), windowHeight(0), isRunning(false), event(), window(nullptr), renderer(nullptr),
-	               assetManager(nullptr), entityManager(nullptr), sceneManager(nullptr)
+	               assetManager(nullptr), entityManager(nullptr), entityFactory(nullptr), sceneManager(nullptr)
 	{
 	}
 

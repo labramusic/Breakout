@@ -1,12 +1,24 @@
 ﻿#include "MovementSystem.hpp"
+
 #include <SDL_events.h>
-#include "System.hpp"
+#include <string>
+
+#include <ECS/Entities/EntityManager.hpp>
 #include <ECS/Components/TransformComponent.hpp>
 #include <ECS/Components/MoveComponent.hpp>
+#include <Scenes/SceneGameplay.hpp>
 #include "Game.hpp"
 
 namespace breakout
 {
+	MovementSystem::MovementSystem(EntityManager& entityManager) : System(entityManager), gameplayScene(nullptr)
+	{
+	}
+
+	MovementSystem::~MovementSystem() 
+	{
+	}
+
 	void MovementSystem::update(double time)
 	{
 		// TODO for each entity with move component apply movement

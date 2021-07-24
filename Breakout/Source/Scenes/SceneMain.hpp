@@ -19,7 +19,5 @@ namespace breakout
 
 	private:
 		//Game &game;
-
-		// renderSystem
 	};
 }

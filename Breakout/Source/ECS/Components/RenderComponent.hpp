@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Component.hpp"
+
 namespace breakout
 {
 	class RenderComponent : public Component

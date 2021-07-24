@@ -1,7 +1,6 @@
-#include <iostream>
-
 #include "Game.hpp"
 #include <SDL.h>
+#include <iostream>
 
 int main(int argc, const char* argv[])
 {

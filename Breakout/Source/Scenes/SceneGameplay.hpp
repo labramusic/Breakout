@@ -1,16 +1,13 @@
 ﻿#pragma once
 
-#include <Level.hpp>
 #include <vector>
+#include <string>
 
-#include <ECS/Systems/RenderSystem.hpp>
-//#include <ECS/Systems/MovementSystem.hpp>
-//#include <ECS/Systems/CollisionSystem.hpp>
 #include "Scene.hpp"
-#include "ECS/Entities/EntityFactory.hpp"
 
 namespace breakout
 {
+	class Level;
 	class MovementSystem;
 	class CollisionSystem;
 

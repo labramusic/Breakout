@@ -7,9 +7,9 @@ namespace breakout
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(EntityManager& entityManager) : System(entityManager) {}
+		RenderSystem(EntityManager& entityManager);
 		//RenderSystem() : System() {}
-		virtual ~RenderSystem() {}
+		virtual ~RenderSystem();
 		
 		void update();
 	};

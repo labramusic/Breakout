@@ -1,5 +1,4 @@
-﻿
-#include "EntityFactory.hpp"
+﻿#include "EntityFactory.hpp"
 
 #include <ECS/Components/BrickComponent.hpp>
 #include <ECS/Components/RenderComponent.hpp>
@@ -8,6 +7,7 @@
 #include <ECS/Components/MoveComponent.hpp>
 
 #include "Game.hpp"
+#include "AssetManager.hpp"
 
 namespace breakout
 {
@@ -39,7 +39,6 @@ namespace breakout
 		manager->addComponent<BrickComponent>(brickEntity, brickType);
 		return brickEntity;
 	}
-
 
 	Entity& EntityFactory::createLabel(const std::string& tag, float x, float y, const std::string& text, SDL_Color color) const
 	{

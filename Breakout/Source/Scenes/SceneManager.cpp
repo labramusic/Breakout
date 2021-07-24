@@ -1,8 +1,13 @@
 #include "SceneManager.hpp"
 
-#include "Game.hpp"
-#include "ECS/Systems/MovementSystem.hpp"
-#include "ECS/Systems/CollisionSystem.hpp"
+#include "Scene.hpp"
+#include "SceneGameplay.hpp"
+#include "SceneMain.hpp"
+#include <Game.hpp>
+#include <ECS/Systems/RenderSystem.hpp>
+#include <ECS/Systems/MovementSystem.hpp>
+#include <ECS/Systems/CollisionSystem.hpp>
+#include <iostream>
 
 namespace breakout
 {
@@ -31,6 +36,41 @@ namespace breakout
 
 		// start with main scene
 		activeScene = scenes[Main];
+		activeScene->loadScene();
+	}
+
+	SceneManager::~SceneManager()
+	{
+		std::cout << "calling destructor of scene manager" << std::endl;
+
+		for (auto it = systems.begin(); it != systems.end(); ++it) {
+			delete* it;
+		}
+
+		for (auto it = scenes.begin(); it != scenes.end(); ++it) {
+			delete it->second;
+		}
+	}
+
+	void SceneManager::update(double time)
+	{
+		activeScene->update(time);
+	}
+
+	void SceneManager::render()
+	{
+		activeScene->render();
+	}
+
+	void SceneManager::handleEvent(const SDL_Event& event)
+	{
+		activeScene->handleEvent(event);
+	}
+
+	void SceneManager::changeScene(const SceneName newScene)
+	{
+		activeScene->unloadScene();
+		activeScene = scenes[newScene];
 		activeScene->loadScene();
 	}
 }

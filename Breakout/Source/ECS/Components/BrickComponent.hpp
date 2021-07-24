@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Component.hpp"
-#include "BrickType.hpp"
+#include <BrickType.hpp>
 
 namespace breakout
 {
