@@ -11,6 +11,8 @@
 #include <ECS/Entities/EntityFactory.hpp>
 #include <Level.hpp>
 
+#include "SceneManager.hpp"
+
 namespace breakout
 {
 	SceneGameplay::SceneGameplay(MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) : 
@@ -158,7 +160,6 @@ namespace breakout
 	void SceneGameplay::gameOver()
 	{
 		currentLevelIndex = 0;
-		unloadScene();
-		loadScene();
+		Game::instance().getSceneManager().changeScene(SceneManager::SceneName::GameOver);
 	}
 }

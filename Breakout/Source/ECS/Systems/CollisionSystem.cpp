@@ -28,7 +28,8 @@ namespace breakout
 
 		// collision data components za lakse izracunavanje ?
 
-		const auto& ball = entityManager.getEntityByTag("ball");
+		const Entity *ball = entityManager.getEntityByTag("ball");
+		if (ball == nullptr) return;
 		auto& ballTransform = entityManager.getComponent<TransformComponent>(*ball);
 
 		auto entities = entityManager.getEntitiesWithComponent<TransformComponent>();

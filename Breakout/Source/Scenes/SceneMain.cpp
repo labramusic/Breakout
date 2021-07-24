@@ -51,11 +51,9 @@ namespace breakout
 	{
 		//Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
 
-		std::cout << "load main scene" << std::endl;
-
 		SDL_Color white = { 255, 255, 255, 255 };
-		Game::instance().getEntityFactory().createLabel("gameTitle", 50, 50, "BREAKOUT", white);
-		Game::instance().getEntityFactory().createLabel("playMsg", 50, 200, "Press Space to play", white);
+		Game::instance().getEntityFactory().createLabel("gameTitle", 350, 200, "BREAKOUT", white);
+		Game::instance().getEntityFactory().createLabel("playMsg", 320, 250, "Press Space to play", white);
 	}
 
 	void SceneMain::unloadScene()
