@@ -34,21 +34,15 @@ namespace breakout
 
 	void SceneGameplay::handleEvent(const SDL_Event& event)
 	{
+		Scene::handleEvent(event);
+
 		if (event.type == SDL_KEYUP)
 		{
 			if (event.key.keysym.sym == SDLK_SPACE)
 			{
-				// skip level
 				nextLevel();
 			}
-			if (event.key.keysym.sym == SDLK_ESCAPE)
-			{
-				SDL_Event sdlevent;
-				sdlevent.type = SDL_QUIT;
-				SDL_PushEvent(&sdlevent);
-			}
 		}
-		//
 
 		movementSystem.onEvent(event);
 	}

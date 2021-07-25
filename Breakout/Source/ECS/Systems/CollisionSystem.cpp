@@ -30,7 +30,7 @@ namespace breakout
 
 		const Entity *ball = entityManager.getEntityByTag("ball");
 		if (ball == nullptr) return;
-		auto& ballTransform = entityManager.getComponent<TransformComponent>(*ball);
+		TransformComponent &ballTransform = entityManager.getComponent<TransformComponent>(*ball);
 
 		auto entities = entityManager.getEntitiesWithComponent<TransformComponent>();
 		for (auto const& entity : entities)

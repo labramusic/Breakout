@@ -11,7 +11,7 @@ namespace breakout
 		Scene(RenderSystem &renderSystem);
 		virtual ~Scene();
 
-		virtual void handleEvent(const SDL_Event& event) = 0;
+		virtual void handleEvent(const SDL_Event& event);
 		virtual void update(double time) = 0;
 		virtual void render() = 0;
 		

@@ -77,10 +77,15 @@ namespace breakout
 
 	void MovementSystem::resetPositions()
 	{
-		auto& paddle = entityManager.getComponent<TransformComponent>(*entityManager.getEntityByTag("paddle"));
-		auto& ball = entityManager.getComponent<TransformComponent>(*entityManager.getEntityByTag("ball"));
-		paddle.position = paddle.initialPos;
-		ball.position = ball.initialPos;
+		const Entity& paddle = *entityManager.getEntityByTag("paddle");
+		const Entity& ball = *entityManager.getEntityByTag("ball");
+		TransformComponent &paddleTr = entityManager.getComponent<TransformComponent>(paddle);
+		TransformComponent &ballTr = entityManager.getComponent<TransformComponent>(ball);
+		paddleTr.position = paddleTr.initialPos;
+		ballTr.position = ballTr.initialPos;
+
+		entityManager.getComponent<MoveComponent>(paddle).velocity.Zero();
+		entityManager.getComponent<MoveComponent>(ball).velocity = Vector2D(0, -1);
 	}
 
 	// input system/component ?

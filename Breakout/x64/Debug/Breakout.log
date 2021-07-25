@@ -1,5 +1,5 @@
-﻿  SceneGameOver.cpp
-TinyXml.lib(tinyxml.obj) : warning LNK4099: PDB 'TinyXml.pdb' was not found with 'TinyXml.lib(tinyxml.obj)' or at 'C:\Users\labra\source\repos\Breakout\x64\Debug\TinyXml.pdb'; linking object as if no debug info
-TinyXml.lib(tinyxmlerror.obj) : warning LNK4099: PDB 'TinyXml.pdb' was not found with 'TinyXml.lib(tinyxmlerror.obj)' or at 'C:\Users\labra\source\repos\Breakout\x64\Debug\TinyXml.pdb'; linking object as if no debug info
-TinyXml.lib(tinyxmlparser.obj) : warning LNK4099: PDB 'TinyXml.pdb' was not found with 'TinyXml.lib(tinyxmlparser.obj)' or at 'C:\Users\labra\source\repos\Breakout\x64\Debug\TinyXml.pdb'; linking object as if no debug info
+﻿  Scene.cpp
+  SceneGameOver.cpp
+  SceneManager.cpp
+  Generating Code...
   Breakout.vcxproj -> C:\Users\labra\source\repos\Breakout\x64\Debug\Breakout.exe

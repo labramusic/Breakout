@@ -19,18 +19,14 @@ namespace breakout
 
 	void SceneMain::handleEvent(const SDL_Event& event)
 	{
+		Scene::handleEvent(event);
+
 		if (event.type == SDL_KEYUP)
 		{
 			if (event.key.keysym.sym == SDLK_SPACE)
 			{
 				// start game
 				Game::instance().getSceneManager().changeScene(SceneManager::SceneName::Gameplay);
-			}
-			if (event.key.keysym.sym == SDLK_ESCAPE)
-			{
-				SDL_Event sdlevent;
-				sdlevent.type = SDL_QUIT;
-				SDL_PushEvent(&sdlevent);
 			}
 		}
 	}
