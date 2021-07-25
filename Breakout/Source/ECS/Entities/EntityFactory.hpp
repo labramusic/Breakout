@@ -13,9 +13,7 @@ namespace breakout
 	class EntityFactory
 	{
 	public:
-		//EntityFactory(): manager(nullptr) {}
 		explicit EntityFactory(const Game &game);
-		//EntityFactory(const EntityFactory&) = delete;
 
 		Entity& createPaddle() const;
 		Entity& createBall() const;

@@ -14,7 +14,7 @@ namespace breakout
 	class AssetManager
 	{
 	public:
-		AssetManager(const Game &game);
+		explicit AssetManager(const Game &game);
 		~AssetManager();
 
 		// texture management

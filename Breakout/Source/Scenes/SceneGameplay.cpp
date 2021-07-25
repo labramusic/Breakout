@@ -18,18 +18,14 @@ namespace breakout
 	SceneGameplay::SceneGameplay(const Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) :
 		Scene(game, renderSystem), movementSystem(movementSystem), collisionSystem(collisionSystem)
 	{
-		levels.push_back(new Level("1"));
-		levels.push_back(new Level("2"));
-		levels.push_back(new Level("3"));
+		levels.push_back(std::make_unique<Level>("1"));
+		levels.push_back(std::make_unique<Level>("2"));
+		levels.push_back(std::make_unique<Level>("3"));
 	}
 
 	SceneGameplay::~SceneGameplay()
 	{
 		std::cout << "calling destructor of scene gameplay" << std::endl;
-
-		for (auto it = levels.begin(); it != levels.end(); ++it) {
-			delete *it;
-		}
 	}
 
 	void SceneGameplay::handleEvent(const SDL_Event& event)
@@ -147,8 +143,7 @@ namespace breakout
 		SDL_Texture* tex = game.getAssetManager().CreateTextureFromText(textC.fontId, textC.text, textC.textColor);
 		// get texture width and height
 		SDL_QueryTexture(tex, nullptr, nullptr, &livesTr.width, &livesTr.height);
-		// update text texture
-		game.getAssetManager().addTexture(elementHUD.getTag(), *tex);
+		game.getAssetManager().addTexture(tag, *tex);
 	}
 
 	void SceneGameplay::gameOver()

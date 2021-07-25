@@ -51,8 +51,7 @@ namespace breakout
 	{
 		if (abs(x) <= 10E-6f && abs(y) <= 10E-6f) return *this;
 
-		const float magnitude = sqrt(pow(x, 2) + pow(y, 2));
-		*this *= 1.0f / magnitude;
+		*this *= static_cast<float>(1. / sqrt(pow(x, 2) + pow(y, 2)));
 
 		return *this;
 	}
@@ -60,8 +59,8 @@ namespace breakout
 
 	Vector2D& Vector2D::Zero()
 	{
-		this->x = 0;
-		this->y = 0;
+		this->x = 0.f;
+		this->y = 0.f;
 
 		return *this;
 	}

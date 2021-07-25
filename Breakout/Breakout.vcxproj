@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="Source\AssetManager.cpp" />
     <ClCompile Include="Source\ECS\Entities\EntityFactory.cpp" />
+    <ClCompile Include="Source\ECS\Entities\EntityManager.cpp" />
     <ClCompile Include="Source\ECS\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Source\ECS\Systems\MovementSystem.cpp" />
     <ClCompile Include="Source\ECS\Systems\RenderSystem.cpp" />

@@ -5,6 +5,8 @@
 #include "ECS/Entities/EntityFactory.hpp"
 #include "Scenes/SceneManager.hpp"
 
+#include <iostream>
+
 namespace breakout
 {
 	Game::Game() : windowWidth(0), windowHeight(0), isRunning(false), event(), window(nullptr), renderer(nullptr),

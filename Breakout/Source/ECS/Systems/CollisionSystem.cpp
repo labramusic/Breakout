@@ -51,7 +51,7 @@ namespace breakout
 					if (brickComponent.hitPoints == 0)
 					{
 						// increase score
-						gameplayScene->score += brickComponent.brickType->breakScore;
+						gameplayScene->score += brickComponent.brickType.breakScore;
 						gameplayScene->updateHUD("scoreHUD", "Score: " + std::to_string(gameplayScene->score));
 
 						entityManager.removeEntity(*entity);
@@ -70,7 +70,7 @@ namespace breakout
 		auto bricks = entityManager.getEntitiesWithComponent<BrickComponent>();
 		for (auto* brick : bricks)
 		{
-			if (entityManager.getComponent<BrickComponent>(*brick).brickType->hitPoints != -1)
+			if (entityManager.getComponent<BrickComponent>(*brick).brickType.hitPoints != -1)
 			{
 				return;
 			}

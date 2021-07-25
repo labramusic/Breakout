@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include <unordered_map>
+#include <memory>
 #include <SDL_events.h>
+
 
 namespace breakout
 {
@@ -12,9 +14,9 @@ namespace breakout
 	class SceneManager
 	{
 	public:
-		enum SceneName { Main, Gameplay, GameOver };
+		enum class SceneName { Main, Gameplay, GameOver };
 
-		SceneManager(const Game &game);
+		explicit SceneManager(const Game &game);
 		~SceneManager();
 		
 		void update(double time);
@@ -27,9 +29,9 @@ namespace breakout
 	private:
 		const Game &game;
 
-		Scene *activeScene;
-		std::unordered_map<SceneName, Scene*> scenes;
+		std::unordered_map<SceneName, std::unique_ptr<Scene>> scenes;
+		std::vector<std::unique_ptr<System>> systems;
 
-		std::vector<System*> systems;
+		Scene *activeScene;
 	};
 }

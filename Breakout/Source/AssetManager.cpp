@@ -37,6 +37,11 @@ namespace breakout
 
 	void AssetManager::addTexture(const std::string id, SDL_Texture& texture)
 	{
+		if (textures[id])
+		{
+			SDL_DestroyTexture(textures[id]);
+		}
+
 		textures[id] = &texture;
 	}
 
@@ -94,46 +99,28 @@ namespace breakout
 		TiXmlDocument doc;
 		doc.LoadFile(getLevelFile(level.levelId));
 
-		auto* levelNode = doc.FirstChildElement("Level");
+		TiXmlElement *levelNode = doc.FirstChildElement("Level");
 		level.rowCount = atoi(levelNode->Attribute("RowCount"));
 		level.colCount = atoi(levelNode->Attribute("ColumnCount"));
 		level.rowSpacing = atoi(levelNode->Attribute("RowSpacing"));
 		level.colSpacing = atoi(levelNode->Attribute("ColumnSpacing"));
 		addTexture(level.levelId, levelNode->Attribute("BackgroundTexture"));
 
-		auto* brickTypes = levelNode->FirstChildElement("BrickTypes");
-		for (auto* node = brickTypes->FirstChildElement(); node; node = node->NextSiblingElement())
+		TiXmlElement *brickTypes = levelNode->FirstChildElement("BrickTypes");
+		for (TiXmlElement *node = brickTypes->FirstChildElement(); node; node = node->NextSiblingElement())
 		{
-			auto brickType = BrickType();
-			brickType.id = node->Attribute("Id");
-			brickType.textureId = "brick" + brickType.id;
-			addTexture(brickType.textureId, node->Attribute("Texture"));
-			const char* hp = node->Attribute("HitPoints");
-			if (std::strcmp(hp, "Infinite") == 0)
-				brickType.hitPoints = -1;
-			else brickType.hitPoints = atoi(hp);
-			
-			// TODO sounds
-			const char* hitSound = node->Attribute("HitSound");
-			if (node->Attribute("BreakSound"))
-				const char* breakSound = node->Attribute("BreakSound");
-			
-			if (node->Attribute("BreakScore"))
-				brickType.breakScore = atoi(node->Attribute("BreakScore"));
-
+			BrickType brickType(*node);
 			level.brickTypes.emplace(brickType.id, std::make_unique<BrickType>(brickType));
+			addTexture(brickType.textureId, node->Attribute("Texture"));
 		}
 
-		level.layout = new std::string[level.rowCount * level.colCount];
 		std::string bricks(levelNode->FirstChildElement("Bricks")->FirstChild()->ToText()->Value());
 		// parse level layout
-		int i = 0;
 		for (char brick : bricks)
 		{
-			std::string s(1, brick);
-			if (brick == '_' || level.brickTypes.find(s) != level.brickTypes.end())
+			if (brick == '_' || level.brickTypes.find(brick) != level.brickTypes.end())
 			{
-				level.layout[i++] = s;
+				level.layout += brick;
 			}
 		}
 	}

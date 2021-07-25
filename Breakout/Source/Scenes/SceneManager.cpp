@@ -17,38 +17,34 @@ namespace breakout
 	SceneManager::SceneManager(const Game &game) : game(game)
 	{
 		// initialize systems
-		RenderSystem * renderSystem = new RenderSystem(game);
-		MovementSystem* movementSystem = new MovementSystem(game);
-		CollisionSystem* collisionSystem = new CollisionSystem(game);
-		// store systems for deallocation
-		systems.push_back(renderSystem);
-		systems.push_back(movementSystem);
-		systems.push_back(collisionSystem);
+		RenderSystem *renderSystem = new RenderSystem(game);
+		MovementSystem *movementSystem = new MovementSystem(game);
+		CollisionSystem *collisionSystem = new CollisionSystem(game);
 
-		scenes.emplace(Main, new SceneMain(game, *renderSystem));
+		// store systems for deallocation
+		std::unique_ptr<System> rs(renderSystem);
+		std::unique_ptr<System> ms(movementSystem);
+		std::unique_ptr<System> cs(collisionSystem);
+		systems.push_back(std::move(rs));
+		systems.push_back(std::move(ms));
+		systems.push_back(std::move(cs));
+
+		scenes.emplace(SceneName::Main, new SceneMain(game, *renderSystem));
 		SceneGameplay* gameplayScene = new SceneGameplay(game, *movementSystem, *collisionSystem, *renderSystem);
-		scenes.emplace(Gameplay, gameplayScene);
-		scenes.emplace(GameOver, new SceneGameOver(game, *renderSystem));
+		scenes.emplace(SceneName::Gameplay, gameplayScene);
+		scenes.emplace(SceneName::GameOver, new SceneGameOver(game, *renderSystem));
 
 		movementSystem->setScene(*gameplayScene);
 		collisionSystem->setScene(*gameplayScene);
 
-		// start with main scene
-		activeScene = scenes[Main];
+		// set main scene as active
+		activeScene = scenes[SceneName::Main].get();
 		activeScene->loadScene();
 	}
 
 	SceneManager::~SceneManager()
 	{
 		std::cout << "calling destructor of scene manager" << std::endl;
-
-		for (auto it = systems.begin(); it != systems.end(); ++it) {
-			delete* it;
-		}
-
-		for (auto it = scenes.begin(); it != scenes.end(); ++it) {
-			delete it->second;
-		}
 	}
 
 	void SceneManager::update(double time)
@@ -69,7 +65,7 @@ namespace breakout
 	void SceneManager::changeScene(const SceneName newScene)
 	{
 		activeScene->unloadScene();
-		activeScene = scenes[newScene];
+		activeScene = scenes[newScene].get();
 		activeScene->loadScene();
 	}
 }

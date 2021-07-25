@@ -11,8 +11,7 @@ namespace breakout
 		virtual ~System() = 0;
 
 	protected:
-		System(const Game &game);
-		//System() = default;
+		explicit System(const Game &game);
 
 		const Game &game;
 		EntityManager &entityManager;

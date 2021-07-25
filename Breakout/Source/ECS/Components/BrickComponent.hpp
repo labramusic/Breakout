@@ -8,9 +8,9 @@ namespace breakout
 	class BrickComponent : public Component
 	{
 	public:
-		BrickComponent(const BrickType& type) : brickType(&type), hitPoints(type.hitPoints) {}
+		BrickComponent(const BrickType& type) : brickType(type), hitPoints(type.hitPoints) {}
 
-		const BrickType* brickType;
+		const BrickType &brickType;
 		int hitPoints;
 	};
 }

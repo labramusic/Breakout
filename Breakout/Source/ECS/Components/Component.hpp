@@ -25,5 +25,8 @@ namespace breakout
 			static ComponentTypeID typeID = getNewComponentTypeID();
 			return typeID;
 		}
+
+	protected:
+		Component() {}
 	};
 }

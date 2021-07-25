@@ -8,8 +8,6 @@
 #include "Entity.hpp"
 #include <ECS/Components/Component.hpp>
 
-#include <iostream>
-
 namespace breakout
 {	
 	class EntityManager
@@ -17,49 +15,12 @@ namespace breakout
 		friend class EntityFactory;
 
 	public:
-		EntityManager() : nextId(1) {}
+		EntityManager();
+		~EntityManager();
 
-		~EntityManager()
-		{
-			std::cout << "calling destructor of entity manager" << std::endl;
-
-			for (auto& entity : entities)
-			{
-				if (!entity) continue;
-				for (auto it = componentsByClass.begin(); it != componentsByClass.end(); ++it) {
-					auto entityComponent = it->second.find(entity->getId());
-					if (entityComponent != it->second.end())
-					{
-						it->second.erase(entityComponent);
-					}
-				}
-
-				entities[entity->getId()].reset();
-			}
-		}
-
-		Entity* getEntityByTag(const std::string& tag)
-		{
-			for (auto& entity : entities)
-			{
-				if (entity && entity->getTag() == tag)
-					return entity.get();
-			}
-			return nullptr;
-		}
-
-		void removeEntity(Entity& entity)
-		{
-			for (auto it = componentsByClass.begin(); it != componentsByClass.end(); ++it) {
-				auto entityComponent = it->second.find(entity.getId());
-				if (entityComponent != it->second.end())
-				{
-					it->second.erase(entityComponent);
-				}
-			}
-
-			entities[entity.getId()]->active = false;
-		}
+		Entity *getEntityByTag(const std::string &tag);
+		void refresh();
+		void removeEntity(Entity &entity);
 
 		template <typename C>
 		C& getComponent(const Entity& entity)
@@ -100,46 +61,13 @@ namespace breakout
 			return entitiesWithComponent;
 		}
 
-		void refresh()
-		{
-			for (auto& entity : entities)
-			{
-				if (entity && !entity->active) entity.reset();
-			}
-		}
-
 	private:
 		std::array<std::unique_ptr<Entity>, MAX_ENTITIES> entities;
 		std::unordered_map<ComponentTypeID, std::unordered_map<EntityID, std::unique_ptr<Component>>> componentsByClass;
 		EntityID nextId;
 
-		EntityID generateNewId()
-		{
-			if (nextId < MAX_ENTITIES)
-			{
-				return nextId++;
-			}
-			
-			for (EntityID i = 1; i < MAX_ENTITIES; ++i)
-			{
-				if (!entities[i])
-				{
-					return i;
-				}
-			}
-
-			// no available ids
-			return 0;
-		}
-
-		Entity& createEntity(const std::string& tag = "")
-		{
-			const EntityID id = generateNewId();
-			Entity* entity = new Entity(id, tag);
-			std::unique_ptr<Entity> uPtr{ entity };
-			entities[id] = std::move(uPtr);
-			return *entity;
-		}
+		EntityID generateNewId();
+		Entity &createEntity(const std::string &tag = "");
 
 		template <typename C, typename... CArgs>
 		C& addComponent(Entity& entity, CArgs&&... cArgs)
@@ -153,7 +81,7 @@ namespace breakout
 				componentsByClass[cId] = std::unordered_map<EntityID, std::unique_ptr<Component>>{};
 			}
 
-			C* component(new C(std::forward<CArgs>(cArgs)...));
+			C *component(new C(std::forward<CArgs>(cArgs)...));
 
 			std::unique_ptr<Component> uPtr{ component };
 			componentsByClass[cId][entity.getId()] = std::move(uPtr);

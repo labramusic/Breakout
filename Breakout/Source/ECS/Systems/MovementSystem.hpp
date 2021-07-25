@@ -11,8 +11,7 @@ namespace breakout
 	class MovementSystem : public System
 	{
 	public:
-		MovementSystem(const Game &game);
-		//MovementSystem() = default;
+		explicit MovementSystem(const Game &game);
 		virtual ~MovementSystem();
 
 		void update(double time);

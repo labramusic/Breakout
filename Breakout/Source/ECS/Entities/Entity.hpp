@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <cstddef>
 
+#include <iostream>
+
 namespace breakout
 {	
 	using EntityID = std::size_t;
@@ -13,8 +15,12 @@ namespace breakout
 	class Entity
 	{
 	public:		
-		//Entity(EntityID id) : id(id) {}
 		Entity(EntityID id, std::string tag) : id(id), tag(std::move(tag)) {}
+
+		~Entity()
+		{
+			std::cout << "destroying entity " << id << std::endl;
+		}
 
 		EntityID getId() const { return id; }
 		std::string getTag() const { return tag; }

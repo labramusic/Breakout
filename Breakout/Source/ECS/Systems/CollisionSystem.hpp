@@ -12,8 +12,7 @@ namespace breakout
 	class CollisionSystem : public System
 	{
 	public:
-		CollisionSystem(const Game &game);
-		//CollisionSystem() : System(), scene(nullptr) {}
+		explicit CollisionSystem(const Game &game);
 		virtual ~CollisionSystem();
 
 		void update(double time);

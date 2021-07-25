@@ -10,7 +10,6 @@ namespace breakout
 	class Scene
 	{
 	public:
-		Scene(const Game &game, RenderSystem &renderSystem);
 		virtual ~Scene();
 
 		virtual void handleEvent(const SDL_Event& event);
@@ -21,6 +20,7 @@ namespace breakout
 		virtual void unloadScene() = 0;
 
 	protected:
+		Scene(const Game &game, RenderSystem &renderSystem);
 		const Game &game;
 
 		RenderSystem &renderSystem;

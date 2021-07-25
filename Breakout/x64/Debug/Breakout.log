@@ -28,10 +28,7 @@ C:\Users\labra\source\repos\Breakout\Breakout\Source\Vector2D.hpp(24,1): warning
           [
               T=double
           ]
-  Scene.cpp
-  SceneGameOver.cpp
   SceneGameplay.cpp
-  SceneMain.cpp
   SceneManager.cpp
   Generating Code...
   Breakout.vcxproj -> C:\Users\labra\source\repos\Breakout\x64\Debug\Breakout.exe

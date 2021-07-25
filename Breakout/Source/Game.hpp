@@ -17,12 +17,6 @@ namespace breakout
 		Game();
 		~Game();
 
-		//static Game& instance()
-		//{
-		//	static Game* instance = new Game();
-		//	return *instance;
-		//}
-
 		// Initialize
 		bool init(const char* title, int xpos, int ypos, int width, int height);
 		// RunLoop
@@ -42,9 +36,7 @@ namespace breakout
 		SceneManager& getSceneManager() const { return *sceneManager; }
 		//
 		
-	private:
-		//Game();
-		
+	private:		
 		// ProcessInput
 		void handleEvents();
 		// UpdateGame
