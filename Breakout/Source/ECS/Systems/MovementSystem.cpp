@@ -7,11 +7,11 @@
 #include <ECS/Components/TransformComponent.hpp>
 #include <ECS/Components/MoveComponent.hpp>
 #include <Scenes/SceneGameplay.hpp>
-#include "Game.hpp"
+#include <Game.hpp>
 
 namespace breakout
 {
-	MovementSystem::MovementSystem(EntityManager& entityManager) : System(entityManager), gameplayScene(nullptr)
+	MovementSystem::MovementSystem(const Game &game) : System(game), gameplayScene(nullptr)
 	{
 	}
 
@@ -37,8 +37,8 @@ namespace breakout
 
 		// clamp to screen
 		if (paddleTransform.position.x < 0) paddleTransform.position.x = 0;
-		if (paddleTransform.position.x + paddleTransform.width > Game::instance().getWindowWidth())
-			paddleTransform.position.x = Game::instance().getWindowWidth() - paddleTransform.width;
+		if (paddleTransform.position.x + paddleTransform.width > game.getWindowWidth())
+			paddleTransform.position.x = game.getWindowWidth() - paddleTransform.width;
 
 		
 		// move ball
@@ -48,7 +48,7 @@ namespace breakout
 		ballTransform.position += ballMove.movementSpeed * ballMove.velocity.Normalize() * time;
 
 		// hits borders
-		if (ballTransform.position.x < 0 || ballTransform.position.x + ballTransform.width > Game::instance().getWindowWidth())
+		if (ballTransform.position.x < 0 || ballTransform.position.x + ballTransform.width > game.getWindowWidth())
 		{
 			ballMove.velocity.x *= -1;
 		}
@@ -58,7 +58,7 @@ namespace breakout
 		}
 
 		// out of bounds
-		if (ballTransform.position.y + ballTransform.height > Game::instance().getWindowHeight())
+		if (ballTransform.position.y + ballTransform.height > game.getWindowHeight())
 		{
 			resetPositions();
 			

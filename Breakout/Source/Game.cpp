@@ -75,7 +75,7 @@ namespace breakout
 		windowHeight = height;
 		isRunning = true;
 
-		assetManager = new AssetManager();
+		assetManager = new AssetManager(*this);
 		assetManager->addFont("gameFont", "../Breakout/Assets/Fonts/SystemBold.fon", 32);
 		assetManager->addTexture("ball", "../Breakout/Assets/Textures/Ball.png");
 		assetManager->addTexture("paddle", "../Breakout/Assets/Textures/Paddle.png");
@@ -84,8 +84,8 @@ namespace breakout
 		assetManager->addLevelFile("3", "../Breakout/Assets/Levels/Level_3.xml");
 		
 		entityManager = new EntityManager();
-		entityFactory = new EntityFactory(*entityManager);
-		sceneManager = new SceneManager();
+		entityFactory = new EntityFactory(*this);
+		sceneManager = new SceneManager(*this);
 
 		//	mTicksCount = SDL_GetTicks();
 		return true;

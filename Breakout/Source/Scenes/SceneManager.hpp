@@ -5,6 +5,7 @@
 
 namespace breakout
 {
+	class Game;
 	class Scene;
 	class System;
 
@@ -13,7 +14,7 @@ namespace breakout
 	public:
 		enum SceneName { Main, Gameplay, GameOver };
 
-		SceneManager();
+		SceneManager(const Game &game);
 		~SceneManager();
 		
 		void update(double time);
@@ -24,7 +25,7 @@ namespace breakout
 		//Scene& getActiveScene() const { return *activeScene; }
 		
 	private:
-		//Game &game;
+		const Game &game;
 
 		Scene *activeScene;
 		std::unordered_map<SceneName, Scene*> scenes;

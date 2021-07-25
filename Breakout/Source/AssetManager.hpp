@@ -8,11 +8,13 @@
 
 namespace breakout
 {
+	class Game;
 	class Level;
 
 	class AssetManager
 	{
 	public:
+		AssetManager(const Game &game);
 		~AssetManager();
 
 		// texture management
@@ -34,6 +36,9 @@ namespace breakout
 		void parseLevel(Level& level);
 
 	private:
+		const Game &game;
+		SDL_Renderer &renderer;
+
 		std::map<std::string, SDL_Texture*> textures;
 		std::map<std::string, TTF_Font*> fonts;
 		std::map<std::string, const char*> levelFiles;

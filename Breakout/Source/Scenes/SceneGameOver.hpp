@@ -7,7 +7,7 @@ namespace breakout
 	class SceneGameOver : public Scene
 	{
 	public:
-		SceneGameOver(RenderSystem& renderSystem);
+		SceneGameOver(const Game &game, RenderSystem &renderSystem);
 		virtual ~SceneGameOver();
 
 		void handleEvent(const SDL_Event& event) override;
@@ -16,8 +16,5 @@ namespace breakout
 
 		void loadScene() override;
 		void unloadScene() override;
-
-	private:
-		//Game &game;
 	};
 }

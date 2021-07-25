@@ -9,6 +9,10 @@
 
 namespace breakout
 {
+	AssetManager::AssetManager(const Game &game) : game(game), renderer(game.getRenderer())
+	{
+	}
+
 	AssetManager::~AssetManager()
 	{
 		for (auto it = textures.begin(); it != textures.end(); ++it)
@@ -25,7 +29,7 @@ namespace breakout
 	void AssetManager::addTexture(const std::string& id, const char* path)
 	{
 		SDL_Surface* tmpSurface = IMG_Load(path);
-		SDL_Texture* tex = SDL_CreateTextureFromSurface(&Game::instance().getRenderer(), tmpSurface);
+		SDL_Texture* tex = SDL_CreateTextureFromSurface(&renderer, tmpSurface);
 		SDL_FreeSurface(tmpSurface);
 		textures.emplace(id, tex);
 	}
@@ -43,7 +47,7 @@ namespace breakout
 
 	void AssetManager::Draw(const std::string tId, SDL_Rect src, SDL_Rect dest)
 	{
-		SDL_RenderCopy(&Game::instance().getRenderer(), getTexture(tId), &src, &dest);
+		SDL_RenderCopy(&renderer, getTexture(tId), &src, &dest);
 	}
 
 	void AssetManager::DrawBackground(const std::string tId)
@@ -51,15 +55,15 @@ namespace breakout
 		SDL_Rect srcR, destR;
 		srcR.x = srcR.y = 0;
 		destR.x = destR.y = 0;
-		srcR.w = destR.w = Game::instance().getWindowWidth();
-		srcR.h = destR.h = Game::instance().getWindowHeight();
+		srcR.w = destR.w = game.getWindowWidth();
+		srcR.h = destR.h = game.getWindowHeight();
 		Draw(tId, srcR, destR);
 	}
 
 	SDL_Texture* AssetManager::CreateTextureFromText(const std::string& fontId, const std::string& text, const SDL_Color color)
 	{
 		SDL_Surface* surf = TTF_RenderText_Blended(getFont(fontId), text.c_str(), color);
-		SDL_Texture* texture = SDL_CreateTextureFromSurface(&Game::instance().getRenderer(), surf);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(&renderer, surf);
 		SDL_FreeSurface(surf);
 		return texture;
 	}

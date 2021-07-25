@@ -9,7 +9,7 @@
 
 namespace breakout
 {
-	SceneGameOver::SceneGameOver(RenderSystem& renderSystem) : Scene(renderSystem)
+	SceneGameOver::SceneGameOver(const Game &game, RenderSystem& renderSystem) : Scene(game, renderSystem)
 	{
 	}
 
@@ -26,7 +26,7 @@ namespace breakout
 			if (event.key.keysym.sym == SDLK_SPACE)
 			{
 				// restart game
-				Game::instance().getSceneManager().changeScene(SceneManager::SceneName::Gameplay);
+				game.getSceneManager().changeScene(SceneManager::SceneName::Gameplay);
 			}
 		}
 	}
@@ -48,12 +48,12 @@ namespace breakout
 		//Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
 
 		SDL_Color white = { 255, 255, 255, 255 };
-		Game::instance().getEntityFactory().createLabel("gameOverText", 350, 200, "GAME OVER", white);
-		Game::instance().getEntityFactory().createLabel("restartText", 315, 250, "Press Space to restart", white);
+		game.getEntityFactory().createLabel("gameOverText", 350, 200, "GAME OVER", white);
+		game.getEntityFactory().createLabel("restartText", 315, 250, "Press Space to restart", white);
 	}
 
 	void SceneGameOver::unloadScene()
 	{
-		Game::instance().getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
+		game.getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
 	}
 }

@@ -7,7 +7,7 @@ namespace breakout
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(EntityManager& entityManager);
+		RenderSystem(const Game &game);
 		//RenderSystem() : System() {}
 		virtual ~RenderSystem();
 		

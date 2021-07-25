@@ -12,7 +12,7 @@ namespace breakout
 	class CollisionSystem : public System
 	{
 	public:
-		CollisionSystem(EntityManager& entityManager);
+		CollisionSystem(const Game &game);
 		//CollisionSystem() : System(), scene(nullptr) {}
 		virtual ~CollisionSystem();
 

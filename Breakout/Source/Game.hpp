@@ -14,14 +14,14 @@ namespace breakout
 
 	class Game {
 	public:
-		//Game();
+		Game();
 		~Game();
 
-		static Game& instance()
-		{
-			static Game* instance = new Game();
-			return *instance;
-		}
+		//static Game& instance()
+		//{
+		//	static Game* instance = new Game();
+		//	return *instance;
+		//}
 
 		// Initialize
 		bool init(const char* title, int xpos, int ypos, int width, int height);
@@ -43,7 +43,7 @@ namespace breakout
 		//
 		
 	private:
-		Game();
+		//Game();
 		
 		// ProcessInput
 		void handleEvents();

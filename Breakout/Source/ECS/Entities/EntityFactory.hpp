@@ -7,16 +7,14 @@
 
 namespace breakout
 {
+	class Game;
 	class BrickType;
 
 	class EntityFactory
 	{
 	public:
 		//EntityFactory(): manager(nullptr) {}
-		explicit EntityFactory(EntityManager& manager) : manager(&manager) 
-		{
-			//std::cout << "Calling EF constructor" << std::endl;
-		}
+		explicit EntityFactory(const Game &game);
 		//EntityFactory(const EntityFactory&) = delete;
 
 		Entity& createPaddle() const;
@@ -28,14 +26,15 @@ namespace breakout
 		void destroyEntitiesWithComponent()
 		{
 			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
-			for (auto const& entity : manager->getEntitiesWithComponent<C>())
+			for (auto const& entity : manager.getEntitiesWithComponent<C>())
 			{
-				manager->removeEntity(*entity);
+				manager.removeEntity(*entity);
 			}
-			manager->refresh();
+			manager.refresh();
 		}
 
 	private:
-		EntityManager* manager;
+		const Game &game;
+		EntityManager &manager;
 	};
 }

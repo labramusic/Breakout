@@ -1,5 +1,37 @@
-﻿  Scene.cpp
+﻿  CollisionSystem.cpp
+C:\Users\labra\source\repos\Breakout\Breakout\Source\ECS\Systems\CollisionSystem.cpp(127,44): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\labra\source\repos\Breakout\Breakout\Source\ECS\Systems\CollisionSystem.cpp(127,32): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  MovementSystem.cpp
+C:\Users\labra\source\repos\Breakout\Breakout\Source\ECS\Systems\MovementSystem.cpp(41,55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\labra\source\repos\Breakout\Breakout\Source\Vector2D.hpp(23,1): warning C4244: '*=': conversion from 'const T' to 'float', possible loss of data
+          with
+          [
+              T=double
+          ]
+C:\Users\labra\source\repos\Breakout\Breakout\Source\Vector2D.hpp(58): message : see reference to function template instantiation 'breakout::Vector2D &breakout::Vector2D::Scale<T>(const T &)' being compiled
+          with
+          [
+              T=double
+          ]
+C:\Users\labra\source\repos\Breakout\Breakout\Source\Vector2D.hpp(40): message : see reference to function template instantiation 'breakout::Vector2D &breakout::Vector2D::operator *=<T>(const T &)' being compiled
+          with
+          [
+              T=double
+          ]
+C:\Users\labra\source\repos\Breakout\Breakout\Source\ECS\Systems\MovementSystem.cpp(36): message : see reference to function template instantiation 'breakout::Vector2D breakout::operator *<double>(breakout::Vector2D,const T &)' being compiled
+          with
+          [
+              T=double
+          ]
+C:\Users\labra\source\repos\Breakout\Breakout\Source\Vector2D.hpp(24,1): warning C4244: '*=': conversion from 'const T' to 'float', possible loss of data
+          with
+          [
+              T=double
+          ]
+  Scene.cpp
   SceneGameOver.cpp
+  SceneGameplay.cpp
+  SceneMain.cpp
   SceneManager.cpp
   Generating Code...
   Breakout.vcxproj -> C:\Users\labra\source\repos\Breakout\x64\Debug\Breakout.exe

@@ -11,7 +11,7 @@ namespace breakout
 	class MovementSystem : public System
 	{
 	public:
-		MovementSystem(EntityManager& entityManager);
+		MovementSystem(const Game &game);
 		//MovementSystem() = default;
 		virtual ~MovementSystem();
 
@@ -22,9 +22,9 @@ namespace breakout
 		void setScene(SceneGameplay &scene) { gameplayScene = &scene; }
 
 	private:
+		SceneGameplay* gameplayScene;
+
 		bool movingLeft = false;
 		bool movingRight = false;
-
-		SceneGameplay* gameplayScene;
 	};
 }

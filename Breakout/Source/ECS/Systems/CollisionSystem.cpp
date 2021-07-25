@@ -13,7 +13,7 @@
 
 namespace breakout
 {
-	CollisionSystem::CollisionSystem(EntityManager& entityManager) : System(entityManager), gameplayScene(nullptr)
+	CollisionSystem::CollisionSystem(const Game &game) : System(game), gameplayScene(nullptr)
 	{
 	}
 

@@ -1,10 +1,12 @@
 #include "Scene.hpp"
+#include "SceneManager.hpp"
+#include <Game.hpp>
 
 #include <iostream>
 
 namespace breakout
 {
-	Scene::Scene(RenderSystem& renderSystem) : renderSystem(renderSystem)
+	Scene::Scene(const Game &game, RenderSystem& renderSystem) : game(game), renderSystem(renderSystem)
 	{
 	}
 

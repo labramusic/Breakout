@@ -9,7 +9,7 @@
 
 namespace breakout
 {
-	RenderSystem::RenderSystem(EntityManager& entityManager) : System(entityManager) 
+	RenderSystem::RenderSystem(const Game &game) : System(game)
 	{
 	}
 
@@ -37,7 +37,7 @@ namespace breakout
 
 			// TODO ref
 			// tko crta tu ??? system bi trebao
-			Game::instance().getAssetManager().Draw(render.tId, srcRect, destRect);
+			game.getAssetManager().Draw(render.tId, srcRect, destRect);
 		}
 	}
 }

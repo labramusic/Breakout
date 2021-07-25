@@ -14,7 +14,7 @@ namespace breakout
 	class SceneGameplay : public Scene
 	{
 	public:
-		SceneGameplay(MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem);
+		SceneGameplay(const Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem);
 		virtual ~SceneGameplay();
 
 		void handleEvent(const SDL_Event& event) override;

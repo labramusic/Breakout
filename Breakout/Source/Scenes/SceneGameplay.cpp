@@ -15,8 +15,8 @@
 
 namespace breakout
 {
-	SceneGameplay::SceneGameplay(MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) : 
-		Scene(renderSystem), movementSystem(movementSystem), collisionSystem(collisionSystem)
+	SceneGameplay::SceneGameplay(const Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) :
+		Scene(game, renderSystem), movementSystem(movementSystem), collisionSystem(collisionSystem)
 	{
 		levels.push_back(new Level("1"));
 		levels.push_back(new Level("2"));
@@ -56,7 +56,7 @@ namespace breakout
 	void SceneGameplay::render()
 	{
 		// TODO once?
-		Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
+		game.getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
 		
 		renderSystem.update();
 	}
@@ -65,7 +65,7 @@ namespace breakout
 	{
 		loadLevel();
 
-		EntityFactory& entityFactory = Game::instance().getEntityFactory();
+		EntityFactory& entityFactory = game.getEntityFactory();
 		entityFactory.createPaddle();
 		entityFactory.createBall();
 
@@ -81,19 +81,19 @@ namespace breakout
 
 	void SceneGameplay::unloadScene()
 	{
-		Game::instance().getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
+		game.getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
 	}
 
 	void SceneGameplay::loadLevel()
 	{
-		Game::instance().getAssetManager().parseLevel(*levels[currentLevelIndex]);
+		game.getAssetManager().parseLevel(*levels[currentLevelIndex]);
 
 		// create level
 		auto& level = levels[currentLevelIndex];
 		const float xoffset = 5.f;
 		const float yoffset = 25.f;
 
-		const int windowWidth = Game::instance().getWindowWidth();
+		const int windowWidth = game.getWindowWidth();
 		level->blockWidth = (windowWidth - 2 * xoffset - (level->colCount - 1) * level->colSpacing) / level->colCount;
 		level->blockHeight = level->blockWidth / 1.25f;
 
@@ -109,7 +109,7 @@ namespace breakout
 					continue;
 				auto& brickType = level->brickTypes[brickId];
 
-				Game::instance().getEntityFactory().createBrick(*brickType, xpos, ypos, level->blockWidth, level->blockHeight);
+				game.getEntityFactory().createBrick(*brickType, xpos, ypos, level->blockWidth, level->blockHeight);
 			}
 		}
 	}
@@ -117,7 +117,7 @@ namespace breakout
 	void SceneGameplay::unloadLevel()
 	{
 		// remove bricks
-		Game::instance().getEntityFactory().destroyEntitiesWithComponent<BrickComponent>();
+		game.getEntityFactory().destroyEntitiesWithComponent<BrickComponent>();
 	}
 
 	void SceneGameplay::nextLevel()
@@ -138,22 +138,22 @@ namespace breakout
 
 	void SceneGameplay::updateHUD(const std::string& tag, const std::string& text)
 	{
-		const Entity& elementHUD = *Game::instance().getEntityManager().getEntityByTag(tag);
+		const Entity& elementHUD = *game.getEntityManager().getEntityByTag(tag);
 
-		TextComponent& textC = Game::instance().getEntityManager().getComponent<TextComponent>(elementHUD);
+		TextComponent& textC = game.getEntityManager().getComponent<TextComponent>(elementHUD);
 		textC.text = text;
 
-		TransformComponent& livesTr = Game::instance().getEntityManager().getComponent<TransformComponent>(elementHUD);
-		SDL_Texture* tex = Game::instance().getAssetManager().CreateTextureFromText(textC.fontId, textC.text, textC.textColor);
+		TransformComponent& livesTr = game.getEntityManager().getComponent<TransformComponent>(elementHUD);
+		SDL_Texture* tex = game.getAssetManager().CreateTextureFromText(textC.fontId, textC.text, textC.textColor);
 		// get texture width and height
 		SDL_QueryTexture(tex, nullptr, nullptr, &livesTr.width, &livesTr.height);
 		// update text texture
-		Game::instance().getAssetManager().addTexture(elementHUD.getTag(), *tex);
+		game.getAssetManager().addTexture(elementHUD.getTag(), *tex);
 	}
 
 	void SceneGameplay::gameOver()
 	{
 		currentLevelIndex = 0;
-		Game::instance().getSceneManager().changeScene(SceneManager::SceneName::GameOver);
+		game.getSceneManager().changeScene(SceneManager::SceneName::GameOver);
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace breakout
 {
+	class Game;
 	class EntityManager;
 
 	class System
@@ -10,9 +11,10 @@ namespace breakout
 		virtual ~System() = 0;
 
 	protected:
-		System(EntityManager& entityManager);
+		System(const Game &game);
 		//System() = default;
 
+		const Game &game;
 		EntityManager &entityManager;
 	};
 }
