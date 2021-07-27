@@ -15,7 +15,7 @@ namespace breakout
 	class Entity
 	{
 	public:		
-		Entity(EntityID id, std::string tag) : id(id), tag(std::move(tag)) {}
+		Entity(EntityID id, std::string tag) : id(id), tag(std::move(tag)), active(true) {}
 
 		~Entity()
 		{
@@ -24,11 +24,12 @@ namespace breakout
 
 		EntityID getId() const { return id; }
 		std::string getTag() const { return tag; }
-
-		bool active = true;
+		int IsActive() const { return active; }
+		void SetActive(bool active) { this->active = active; }
 		
 	private:
 		EntityID id;
 		std::string tag;
+		bool active;
 	};
 }

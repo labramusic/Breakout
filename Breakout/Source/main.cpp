@@ -4,26 +4,24 @@
 
 int main(int argc, const char* argv[])
 {
-	auto status = EXIT_FAILURE;
+	int status = EXIT_FAILURE;
 
 	try
 	{
 		breakout::Game game;
-		//breakout::Game& game = breakout::Game::instance();
-		bool success = game.init("Breakout", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640);
+		bool success = game.Init("Breakout", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640);
 		if (success)
 		{
-			status = game.run();
+			status = game.Run();
 		}
-		game.clean();
-		//delete &game;
+		game.Clean();
 	}
-	catch(const std::exception& e)
+	catch(const std::exception &e)
 	{
 		std::cout << "Exception: " << e.what() << std::endl;
 		std::cin.get();
 	}
-	catch (...)
+	catch(...)
 	{
 		std::cout << "Unknown exception!" << std::endl;
 		std::cin.get();

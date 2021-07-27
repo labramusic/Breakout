@@ -13,7 +13,7 @@
 
 namespace breakout
 {
-	CollisionSystem::CollisionSystem(const Game &game) : System(game), gameplayScene(nullptr)
+	CollisionSystem::CollisionSystem(Game &game) : System(game), gameplayScene(nullptr)
 	{
 	}
 
@@ -21,40 +21,32 @@ namespace breakout
 	{
 	}
 
-	void CollisionSystem::update(double time)
+	void CollisionSystem::Update(double time) const
 	{
-		// TODO get each entity with appropriate components and apply logic 
-		// npr za laser i ship dohvati sve asteroide pa provjeravaj if coll
+		const Entity *ball = entityManager.GetEntityByTag("ball");
+		if (!ball) return;
+		TransformComponent &ballTransform = entityManager.GetComponent<TransformComponent>(*ball);
 
-		// collision data components za lakse izracunavanje ?
-
-		const Entity *ball = entityManager.getEntityByTag("ball");
-		if (ball == nullptr) return;
-		TransformComponent &ballTransform = entityManager.getComponent<TransformComponent>(*ball);
-
-		auto entities = entityManager.getEntitiesWithComponent<TransformComponent>();
-		for (auto const& entity : entities)
+		std::vector<Entity*> entities = entityManager.GetEntitiesWithComponent<TransformComponent>();
+		for (Entity* const &entity : entities)
 		{
-			auto& otherTransform = entityManager.getComponent<TransformComponent>(*entity);
-			auto& ballMove = entityManager.getComponent<MoveComponent>(*ball);
+			TransformComponent &otherTransform = entityManager.GetComponent<TransformComponent>(*entity);
+			MoveComponent &ballMove = entityManager.GetComponent<MoveComponent>(*ball);
 			if (entity->getTag() == "brick")
 			{
 				if (checkBallCollision(ballTransform, otherTransform))
 				{
 					handleBallCollisionWithBrick(ballTransform, ballMove, otherTransform);
 
-					// TODO refactor with observer pattern
-					auto& brickComponent = entityManager.getComponent<BrickComponent>(*entity);
+					BrickComponent &brickComponent = entityManager.GetComponent<BrickComponent>(*entity);
 					// -1 reserved for impenetrable
-					if (brickComponent.hitPoints > 0) 
-						--brickComponent.hitPoints;
-					if (brickComponent.hitPoints == 0)
+					if (brickComponent.GetHitPoints() > 0)
+						brickComponent.TakeHit();
+					if (brickComponent.GetHitPoints() == 0)
 					{
-						// increase score
-						gameplayScene->score += brickComponent.brickType.breakScore;
-						gameplayScene->updateHUD("scoreHUD", "Score: " + std::to_string(gameplayScene->score));
+						gameplayScene->AddScore(brickComponent.GetBrickType().GetBreakScore());
 
-						entityManager.removeEntity(*entity);
+						entity->SetActive(false);
 						break;
 					}
 				}
@@ -65,46 +57,33 @@ namespace breakout
 					handleBallCollisionWithPaddle(ballTransform, ballMove, otherTransform);
 			}
 		}
-
-		// if there are bricks other than impenetrable remaining
-		auto bricks = entityManager.getEntitiesWithComponent<BrickComponent>();
-		for (auto* brick : bricks)
-		{
-			if (entityManager.getComponent<BrickComponent>(*brick).brickType.hitPoints != -1)
-			{
-				return;
-			}
-		}
-		
-		gameplayScene->nextLevel();
 	}
 
-	void CollisionSystem::onEvent(const SDL_Event& event)
+	void CollisionSystem::OnEvent(const SDL_Event &event) const
 	{
 	}
 
-
-	bool CollisionSystem::checkBallCollision(const TransformComponent& t1, const TransformComponent& t2) const
+	bool CollisionSystem::checkBallCollision(const TransformComponent &t1, const TransformComponent &t2)
 	{
 		// AABB
-		return t1.position.x + t1.width >= t2.position.x &&
-			t2.position.x + t2.width >= t1.position.x &&
-			t1.position.y + t1.height >= t2.position.y &&
-			t2.position.y + t2.height >= t1.position.y;
+		return t1.GetPosition().x + t1.GetWidth() >= t2.GetPosition().x &&
+			t2.GetPosition().x + t2.GetWidth() >= t1.GetPosition().x &&
+			t1.GetPosition().y + t1.GetHeight() >= t2.GetPosition().y &&
+			t2.GetPosition().y + t2.GetHeight() >= t1.GetPosition().y;
 	}
 
 
-	bool CollisionSystem::paddleTopCollision(const TransformComponent& ballTr, const TransformComponent& paddleTr) const
+	bool CollisionSystem::paddleTopCollision(const TransformComponent &ballTr, const TransformComponent &paddleTr)
 	{
-		return paddleTr.position.y <= ballTr.position.y + ballTr.height;
+		return paddleTr.GetPosition().y <= ballTr.GetPosition().y + static_cast<float>(ballTr.GetHeight());
 	}
 
-	void CollisionSystem::handleBallCollisionWithBrick(const TransformComponent& ballTr, MoveComponent& ballM, const TransformComponent& brickTr) const
+	void CollisionSystem::handleBallCollisionWithBrick(const TransformComponent &ballTr, MoveComponent &ballM, const TransformComponent &brickTr) 
 	{
-		const float overlapLeft{ ballTr.position.x + ballTr.width - brickTr.position.x };
-		const float overlapRight{ brickTr.position.x + brickTr.width - ballTr.position.x };
-		const float overlapTop{ ballTr.position.y + ballTr.height - brickTr.position.y };
-		const float overlapBottom{ brickTr.position.y + brickTr.height - ballTr.position.y };
+		const float overlapLeft{ ballTr.GetPosition().x + ballTr.GetWidth() - brickTr.GetPosition().x };
+		const float overlapRight{ brickTr.GetPosition().x + brickTr.GetWidth() - ballTr.GetPosition().x };
+		const float overlapTop{ ballTr.GetPosition().y + ballTr.GetHeight() - brickTr.GetPosition().y };
+		const float overlapBottom{ brickTr.GetPosition().y + brickTr.GetHeight() - ballTr.GetPosition().y };
 
 		const bool ballFromLeft(abs(overlapLeft) < abs(overlapRight));
 		const bool ballFromTop(abs(overlapTop) < abs(overlapBottom));
@@ -113,19 +92,18 @@ namespace breakout
 		const float minOverlapY{ ballFromTop ? overlapTop : overlapBottom };
 
 		if (abs(minOverlapX) < abs(minOverlapY))
-			ballM.velocity.x = ballFromLeft ? -abs(ballM.velocity.x) : abs(ballM.velocity.x);
+			ballM.SetVelocityX(ballFromLeft ? -abs(ballM.GetVelocity().x) : abs(ballM.GetVelocity().x));
 		else
-			ballM.velocity.y = ballFromTop ? -abs(ballM.velocity.y) : abs(ballM.velocity.y);
+			ballM.SetVelocityY(ballFromTop ? -abs(ballM.GetVelocity().y) : abs(ballM.GetVelocity().y));
 	}
 
-	void CollisionSystem::handleBallCollisionWithPaddle(const TransformComponent& ballTr, MoveComponent& ballM, const TransformComponent& paddleTr) const
+	void CollisionSystem::handleBallCollisionWithPaddle(const TransformComponent &ballTr, MoveComponent &ballM, const TransformComponent &paddleTr) 
 	{
-		double offset = paddleTr.position.x + (paddleTr.width / 2.f) - ballTr.position.x - (ballTr.width / 2.f);
-		double normalizedOffset = offset / (paddleTr.width / 2.f);
-		double angleOffset = normalizedOffset * 60 * (M_PI / 180);
-		double angle = angleOffset + M_PI / 2;
-		ballM.velocity = Vector2D(cos(angle), sin(angle));
-
-		ballM.velocity.y *= -1;
+		const double offset = paddleTr.GetPosition().x + (paddleTr.GetWidth() / 2.) - ballTr.GetPosition().x - (ballTr.GetWidth() / 2.);
+		const double normalizedOffset = offset / (paddleTr.GetWidth() / 2.);
+		const double angleOffset = normalizedOffset * 60 * (M_PI / 180);
+		const double angle = angleOffset + M_PI / 2;
+		ballM.SetVelocity(Vector2D(static_cast<float>(cos(angle)), static_cast<float>(sin(angle))));
+		ballM.SetVelocityY(-ballM.GetVelocity().y);
 	}
 }

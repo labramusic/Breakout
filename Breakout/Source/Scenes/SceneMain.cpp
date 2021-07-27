@@ -9,7 +9,7 @@
 
 namespace breakout
 {
-	SceneMain::SceneMain(const Game &game, RenderSystem &renderSystem) : Scene(game, renderSystem)
+	SceneMain::SceneMain(Game &game, RenderSystem &renderSystem) : Scene(game, renderSystem)
 	{
 	}
 
@@ -17,43 +17,38 @@ namespace breakout
 	{
 	}
 
-	void SceneMain::handleEvent(const SDL_Event& event)
+	void SceneMain::HandleEvent(const SDL_Event &event)
 	{
-		Scene::handleEvent(event);
-
+		Scene::HandleEvent(event);
+		
 		if (event.type == SDL_KEYUP)
 		{
 			if (event.key.keysym.sym == SDLK_SPACE)
 			{
 				// start game
-				game.getSceneManager().changeScene(SceneManager::SceneName::Gameplay);
+				game.GetSceneManager().ChangeScene(SceneManager::SceneName::Gameplay);
 			}
 		}
 	}
 
-	void SceneMain::update(double time)
+	void SceneMain::Update(double time)
 	{
 	}
 
-	void SceneMain::render()
+	void SceneMain::Render()
 	{
-		// TODO once?
-		//Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
-
-		renderSystem.update();
+		renderSystem.Update();
 	}
 
-	void SceneMain::loadScene()
+	void SceneMain::LoadScene()
 	{
-		//Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
-
-		SDL_Color white = { 255, 255, 255, 255 };
-		game.getEntityFactory().createLabel("gameTitle", 350, 200, "BREAKOUT", white);
-		game.getEntityFactory().createLabel("playMsg", 320, 250, "Press Space to play", white);
+		const SDL_Color white = { 255, 255, 255, 255 };
+		game.GetEntityFactory().CreateLabel("gameTitle", 350.f, 200.f, "BREAKOUT", white);
+		game.GetEntityFactory().CreateLabel("playMsg", 320.f, 250.f, "Press Space to play", white);
 	}
 
-	void SceneMain::unloadScene()
+	void SceneMain::UnloadScene()
 	{
-		game.getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
+		game.GetEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
 	}
 }

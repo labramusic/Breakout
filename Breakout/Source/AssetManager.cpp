@@ -9,7 +9,7 @@
 
 namespace breakout
 {
-	AssetManager::AssetManager(const Game &game) : game(game), renderer(game.getRenderer())
+	AssetManager::AssetManager(Game &game) : game(game), renderer(game.GetRenderer())
 	{
 	}
 
@@ -26,16 +26,15 @@ namespace breakout
 		}
 	}
 
-	void AssetManager::addTexture(const std::string& id, const char* path)
+	void AssetManager::AddTexture(const std::string &id, const char* path)
 	{
-		SDL_Surface* tmpSurface = IMG_Load(path);
-		SDL_Texture* tex = SDL_CreateTextureFromSurface(&renderer, tmpSurface);
+		SDL_Surface *tmpSurface = IMG_Load(path);
+		SDL_Texture *tex = SDL_CreateTextureFromSurface(&renderer, tmpSurface);
 		SDL_FreeSurface(tmpSurface);
 		textures.emplace(id, tex);
 	}
 
-
-	void AssetManager::addTexture(const std::string id, SDL_Texture& texture)
+	void AssetManager::AddTexture(const std::string &id, SDL_Texture &texture)
 	{
 		if (textures[id])
 		{
@@ -45,83 +44,86 @@ namespace breakout
 		textures[id] = &texture;
 	}
 
-	SDL_Texture* AssetManager::getTexture(const std::string id)
+	SDL_Texture *AssetManager::GetTexture(const std::string &id)
 	{
 		return textures[id];
 	}
 
-	void AssetManager::Draw(const std::string tId, SDL_Rect src, SDL_Rect dest)
+	void AssetManager::Draw(const std::string &tId, SDL_Rect src, SDL_Rect dest)
 	{
-		SDL_RenderCopy(&renderer, getTexture(tId), &src, &dest);
+		SDL_RenderCopy(&renderer, GetTexture(tId), &src, &dest);
 	}
 
-	void AssetManager::DrawBackground(const std::string tId)
+	void AssetManager::DrawBackground(const std::string &tId)
 	{
 		SDL_Rect srcR, destR;
 		srcR.x = srcR.y = 0;
 		destR.x = destR.y = 0;
-		srcR.w = destR.w = game.getWindowWidth();
-		srcR.h = destR.h = game.getWindowHeight();
+		srcR.w = destR.w = game.GetWindowWidth();
+		srcR.h = destR.h = game.GetWindowHeight();
 		Draw(tId, srcR, destR);
 	}
 
-	SDL_Texture* AssetManager::CreateTextureFromText(const std::string& fontId, const std::string& text, const SDL_Color color)
+	SDL_Texture *AssetManager::CreateTextureFromText(const std::string &fontId, const std::string &text, const SDL_Color color)
 	{
-		SDL_Surface* surf = TTF_RenderText_Blended(getFont(fontId), text.c_str(), color);
-		SDL_Texture* texture = SDL_CreateTextureFromSurface(&renderer, surf);
+		SDL_Surface *surf = TTF_RenderText_Blended(GetFont(fontId), text.c_str(), color);
+		SDL_Texture *texture = SDL_CreateTextureFromSurface(&renderer, surf);
 		SDL_FreeSurface(surf);
 		return texture;
 	}
 
-
-	void AssetManager::addFont(const std::string& id, const char* path, const int fontSize)
+	void AssetManager::AddFont(const std::string &id, const char *path, const int fontSize)
 	{
 		fonts.emplace(id, TTF_OpenFont(path, fontSize));
 	}
 
-	TTF_Font* AssetManager::getFont(const std::string id)
+	TTF_Font *AssetManager::GetFont(const std::string &id)
 	{
 		return fonts[id];
 	}
 
-	void AssetManager::addLevelFile(const std::string& id, const char* path)
+	void AssetManager::AddLevelFile(const std::string &id, const char *path)
 	{
-		levelFiles.emplace(id, path);
+		levelPaths.emplace(id, path);
 	}
 
-	const char* AssetManager::getLevelFile(const std::string& id)
+	const char *AssetManager::GetLevelFile(const std::string &id)
 	{
-		return levelFiles[id];
+		return levelPaths[id];
 	}
 
-	void AssetManager::parseLevel(Level& level)
+	void AssetManager::ParseLevel(Level &level)
 	{
 		TiXmlDocument doc;
-		doc.LoadFile(getLevelFile(level.levelId));
+		doc.LoadFile(GetLevelFile(level.GetLevelId()));
 
 		TiXmlElement *levelNode = doc.FirstChildElement("Level");
-		level.rowCount = atoi(levelNode->Attribute("RowCount"));
-		level.colCount = atoi(levelNode->Attribute("ColumnCount"));
-		level.rowSpacing = atoi(levelNode->Attribute("RowSpacing"));
-		level.colSpacing = atoi(levelNode->Attribute("ColumnSpacing"));
-		addTexture(level.levelId, levelNode->Attribute("BackgroundTexture"));
+		level.SetRowCount(std::stoi(levelNode->Attribute("RowCount")));
+		level.SetColCount(std::stoi(levelNode->Attribute("ColumnCount")));
+		level.SetRowSpacing(std::stoi(levelNode->Attribute("RowSpacing")));
+		level.SetColSpacing(std::stoi(levelNode->Attribute("ColumnSpacing")));
+		AddTexture(level.GetLevelId(), levelNode->Attribute("BackgroundTexture"));
 
+		std::unordered_map<char, std::unique_ptr<BrickType>> brickTypesMap;
 		TiXmlElement *brickTypes = levelNode->FirstChildElement("BrickTypes");
 		for (TiXmlElement *node = brickTypes->FirstChildElement(); node; node = node->NextSiblingElement())
 		{
 			BrickType brickType(*node);
-			level.brickTypes.emplace(brickType.id, std::make_unique<BrickType>(brickType));
-			addTexture(brickType.textureId, node->Attribute("Texture"));
+			brickTypesMap.emplace(brickType.GetId(), std::make_unique<BrickType>(brickType));
+			AddTexture(brickType.GetTextureId(), node->Attribute("Texture"));
 		}
+		level.SetBrickTypes(brickTypesMap);
 
 		std::string bricks(levelNode->FirstChildElement("Bricks")->FirstChild()->ToText()->Value());
 		// parse level layout
+		std::string layout;
 		for (char brick : bricks)
 		{
-			if (brick == '_' || level.brickTypes.find(brick) != level.brickTypes.end())
+			if (brick == '_' || level.GetBrickTypes().find(brick) != level.GetBrickTypes().end())
 			{
-				level.layout += brick;
+				layout += brick;
 			}
 		}
+		level.SetLayout(layout);
 	}
 }

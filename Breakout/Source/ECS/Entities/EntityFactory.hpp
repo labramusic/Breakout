@@ -13,26 +13,28 @@ namespace breakout
 	class EntityFactory
 	{
 	public:
-		explicit EntityFactory(const Game &game);
+		explicit EntityFactory(Game &game);
+		EntityFactory(const EntityFactory&) = delete;
+		void operator=(const EntityFactory&) = delete;
 
-		Entity& createPaddle() const;
-		Entity& createBall() const;
-		Entity& createBrick(const BrickType& brickType, float x, float y, float w, float h) const;
-		Entity& createLabel(const std::string& tag, float x, float y, const std::string& text, SDL_Color color) const;
+		Entity &CreatePaddle() const;
+		Entity &CreateBall() const;
+		Entity &CreateBrick(const BrickType &brickType, float x, float y, float w, float h) const;
+		Entity &CreateLabel(const std::string &tag, float x, float y, const std::string &text, SDL_Color color) const;
 
 		template <typename C>
 		void destroyEntitiesWithComponent()
 		{
 			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
-			for (auto const& entity : manager.getEntitiesWithComponent<C>())
+			for (Entity* const &entity : manager.GetEntitiesWithComponent<C>())
 			{
-				manager.removeEntity(*entity);
+				entity->SetActive(false);
 			}
-			manager.refresh();
+			manager.Refresh();
 		}
 
 	private:
-		const Game &game;
+		Game &game;
 		EntityManager &manager;
 	};
 }

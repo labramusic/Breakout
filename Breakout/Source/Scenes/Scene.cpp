@@ -6,7 +6,7 @@
 
 namespace breakout
 {
-	Scene::Scene(const Game &game, RenderSystem& renderSystem) : game(game), renderSystem(renderSystem)
+	Scene::Scene(Game &game, RenderSystem& renderSystem) : game(game), renderSystem(renderSystem)
 	{
 	}
 
@@ -14,7 +14,7 @@ namespace breakout
 	{
 	}
 
-	void Scene::handleEvent(const SDL_Event& event)
+	void Scene::HandleEvent(const SDL_Event &event)
 	{
 		if (event.type == SDL_KEYUP)
 		{

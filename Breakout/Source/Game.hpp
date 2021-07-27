@@ -16,46 +16,40 @@ namespace breakout
 	public:
 		Game();
 		~Game();
+		Game(const Game&) = delete;
+		void operator=(const Game&) = delete;
 
-		// Initialize
-		bool init(const char* title, int xpos, int ypos, int width, int height);
-		// RunLoop
-		int run();
-		// Shutdown
-		void clean();
+		bool Init(const char *title, int xpos, int ypos, int width, int height);
+		int Run();
+		void Clean() const;
 
 		// shared context
-		SDL_Window& getWindow() const { return *window; }
-		int getWindowWidth() const { return windowWidth; }
-		int getWindowHeight() const { return windowHeight; }
-		SDL_Renderer& getRenderer() const { return *renderer; }
+		SDL_Window &GetWindow() const { return *window; }
+		int GetWindowWidth() const { return windowWidth; }
+		int GetWindowHeight() const { return windowHeight; }
+		SDL_Renderer &GetRenderer() const { return *renderer; }
 
-		AssetManager& getAssetManager() const { return *assetManager; }
-		EntityManager& getEntityManager() const { return *entityManager; }
-		EntityFactory& getEntityFactory() const { return *entityFactory; }
-		SceneManager& getSceneManager() const { return *sceneManager; }
+		AssetManager &GetAssetManager() const { return *assetManager; }
+		EntityManager &GetEntityManager() const { return *entityManager; }
+		EntityFactory &GetEntityFactory() const { return *entityFactory; }
+		SceneManager &GetSceneManager() const { return *sceneManager; }
 		//
 		
 	private:		
-		// ProcessInput
 		void handleEvents();
-		// UpdateGame
-		void update(double time);
-		// GenerateOutput
-		void render();
+		void update(double time) const;
+		void render() const;
 
 		int windowWidth;
 		int windowHeight;
 		bool isRunning;
 		SDL_Event event;
 		
-		//
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		AssetManager* assetManager;
 		EntityManager* entityManager;
 		EntityFactory* entityFactory;
 		SceneManager* sceneManager;
-		// 
 	};
 }

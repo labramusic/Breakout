@@ -9,11 +9,13 @@ namespace breakout
 	{
 	public:
 		virtual ~System() = 0;
+		System(const System &) = delete;
+		void operator=(const System &) = delete;
 
 	protected:
-		explicit System(const Game &game);
+		explicit System(Game &game);
 
-		const Game &game;
+		Game &game;
 		EntityManager &entityManager;
 	};
 }

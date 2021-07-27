@@ -8,6 +8,7 @@
 #include <ECS/Systems/MovementSystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/RenderSystem.hpp>
+#include <ECS/Entities/EntityManager.hpp>
 #include <ECS/Entities/EntityFactory.hpp>
 #include <Level.hpp>
 
@@ -15,12 +16,17 @@
 
 namespace breakout
 {
-	SceneGameplay::SceneGameplay(const Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) :
-		Scene(game, renderSystem), movementSystem(movementSystem), collisionSystem(collisionSystem)
+	SceneGameplay::SceneGameplay(Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem) :
+		Scene(game, renderSystem), entityManager(game.GetEntityManager()), movementSystem(movementSystem), collisionSystem(collisionSystem), isGameOver(false)
 	{
 		levels.push_back(std::make_unique<Level>("1"));
 		levels.push_back(std::make_unique<Level>("2"));
 		levels.push_back(std::make_unique<Level>("3"));
+
+		for (int i = 0; i < levels.size(); ++i)
+		{
+			game.GetAssetManager().ParseLevel(*levels[i]);
+		}
 	}
 
 	SceneGameplay::~SceneGameplay()
@@ -28,9 +34,9 @@ namespace breakout
 		std::cout << "calling destructor of scene gameplay" << std::endl;
 	}
 
-	void SceneGameplay::handleEvent(const SDL_Event& event)
+	void SceneGameplay::HandleEvent(const SDL_Event &event)
 	{
-		Scene::handleEvent(event);
+		Scene::HandleEvent(event);
 
 		if (event.type == SDL_KEYUP)
 		{
@@ -40,80 +46,80 @@ namespace breakout
 			}
 		}
 
-		movementSystem.onEvent(event);
+		movementSystem.OnEvent(event);
 	}
 	
-	void SceneGameplay::update(double time)
+	void SceneGameplay::Update(double time)
 	{
-		movementSystem.update(time);
-		collisionSystem.update(time);
+		movementSystem.Update(time);
+		collisionSystem.Update(time);
+
+		if (!isGameOver && levelFinished())
+			nextLevel();
 	}
 
-	void SceneGameplay::render()
+	void SceneGameplay::Render()
 	{
-		// TODO once?
-		game.getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
+		game.GetAssetManager().DrawBackground(levels[currentLevelIndex]->GetLevelId());
 		
-		renderSystem.update();
+		renderSystem.Update();
 	}
 
-	void SceneGameplay::loadScene()
+	void SceneGameplay::LoadScene()
 	{
 		loadLevel();
 
-		EntityFactory& entityFactory = game.getEntityFactory();
-		entityFactory.createPaddle();
-		entityFactory.createBall();
+		EntityFactory &entityFactory = game.GetEntityFactory();
+		entityFactory.CreatePaddle();
+		entityFactory.CreateBall();
 
 		// create UI
-		SDL_Color white = { 255, 255, 255, 255 };
-		entityFactory.createLabel("levelHUD", 10, 0, "Level 1", white);
-		entityFactory.createLabel("scoreHUD", 350, 0, "Score: 0", white);
-		entityFactory.createLabel("livesHUD", 720, 0, "Lives: 3", white);
+		const SDL_Color white = { 255, 255, 255, 255 };
+		entityFactory.CreateLabel("levelHUD", 10.f, 0.f, "Level 1", white);
+		entityFactory.CreateLabel("scoreHUD", 350.f, 0.f, "Score: 0", white);
+		entityFactory.CreateLabel("livesHUD", 720.f, 0.f, "Lives: 3", white);
 
 		score = 0;
 		lives = 3;
+		isGameOver = false;
 	}
 
-	void SceneGameplay::unloadScene()
+	void SceneGameplay::UnloadScene()
 	{
-		game.getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
+		game.GetEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
 	}
 
 	void SceneGameplay::loadLevel()
 	{
-		game.getAssetManager().parseLevel(*levels[currentLevelIndex]);
-
 		// create level
-		auto& level = levels[currentLevelIndex];
+		std::unique_ptr<Level> &level = levels[currentLevelIndex];
 		const float xoffset = 5.f;
 		const float yoffset = 25.f;
 
-		const int windowWidth = game.getWindowWidth();
-		level->blockWidth = (windowWidth - 2 * xoffset - (level->colCount - 1) * level->colSpacing) / level->colCount;
-		level->blockHeight = level->blockWidth / 1.25f;
+		const int windowWidth = game.GetWindowWidth();
+		level->SetBlockWidth((windowWidth - 2 * xoffset - (level->GetColCount() - 1) * level->GetColSpacing()) / level->GetColCount());
+		level->SetBlockHeight(level->GetBlockWidth() / 1.25f);
 
-		for (auto i = 0; i < level->rowCount; ++i)
+		for (int i = 0; i < level->GetRowCount(); ++i)
 		{
-			for (auto j = 0; j < level->colCount; ++j)
+			for (int j = 0; j < level->GetColCount(); ++j)
 			{
-				const float xpos = xoffset + j * (level->blockWidth + level->colSpacing);
-				const float ypos = yoffset + i * (level->blockHeight + level->rowSpacing);
+				const float xpos = xoffset + j * (level->GetBlockWidth() + level->GetColSpacing());
+				const float ypos = yoffset + i * (level->GetBlockHeight() + level->GetRowSpacing());
 
-				auto brickId = level->layout[i * level->colCount + j];
-				if (level->brickTypes.find(brickId) == level->brickTypes.end())
+				char brickId = level->GetLayout()[i * level->GetColCount() + j];
+				if (level->GetBrickTypes().find(brickId) == level->GetBrickTypes().end())
 					continue;
-				auto& brickType = level->brickTypes[brickId];
 
-				game.getEntityFactory().createBrick(*brickType, xpos, ypos, level->blockWidth, level->blockHeight);
+				game.GetEntityFactory().CreateBrick(*level->GetBrickTypes().at(brickId), xpos, ypos, level->GetBlockWidth(), level->GetBlockHeight());
 			}
 		}
 	}
 
-	void SceneGameplay::unloadLevel()
+	void SceneGameplay::unloadLevel() const
 	{
 		// remove bricks
-		game.getEntityFactory().destroyEntitiesWithComponent<BrickComponent>();
+		game.GetEntityFactory().destroyEntitiesWithComponent<BrickComponent>();
 	}
 
 	void SceneGameplay::nextLevel()
@@ -121,7 +127,7 @@ namespace breakout
 		++currentLevelIndex;
 		if (currentLevelIndex < levels.size())
 		{
-			movementSystem.resetPositions();
+			movementSystem.ResetPositions();
 			unloadLevel();
 			loadLevel();
 			updateHUD("levelHUD", "Level " + std::to_string(currentLevelIndex + 1));
@@ -132,23 +138,61 @@ namespace breakout
 		}
 	}
 
-	void SceneGameplay::updateHUD(const std::string& tag, const std::string& text)
+	void SceneGameplay::updateHUD(const std::string& tag, const std::string& text) const
 	{
-		const Entity& elementHUD = *game.getEntityManager().getEntityByTag(tag);
+		const Entity &elementHUD = *game.GetEntityManager().GetEntityByTag(tag);
 
-		TextComponent& textC = game.getEntityManager().getComponent<TextComponent>(elementHUD);
-		textC.text = text;
+		TextComponent &textC = game.GetEntityManager().GetComponent<TextComponent>(elementHUD);
+		textC.SetText(text);
 
-		TransformComponent& livesTr = game.getEntityManager().getComponent<TransformComponent>(elementHUD);
-		SDL_Texture* tex = game.getAssetManager().CreateTextureFromText(textC.fontId, textC.text, textC.textColor);
+		TransformComponent &livesTr = game.GetEntityManager().GetComponent<TransformComponent>(elementHUD);
+		SDL_Texture *tex = game.GetAssetManager().CreateTextureFromText(textC.GetFontId(), textC.GetText(), textC.GetTextColor());
 		// get texture width and height
-		SDL_QueryTexture(tex, nullptr, nullptr, &livesTr.width, &livesTr.height);
-		game.getAssetManager().addTexture(tag, *tex);
+		int w, h;
+		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+		livesTr.SetWidth(w);
+		livesTr.SetHeight(h);
+		game.GetAssetManager().AddTexture(tag, *tex);
+	}
+
+	void SceneGameplay::LoseLife()
+	{
+		--lives;
+		if (lives == 0)
+		{
+			gameOver();
+		}
+		else
+		{
+			updateHUD("livesHUD", "Lives: " + std::to_string(lives));
+		}
 	}
 
 	void SceneGameplay::gameOver()
 	{
+		isGameOver = true;
 		currentLevelIndex = 0;
-		game.getSceneManager().changeScene(SceneManager::SceneName::GameOver);
+		game.GetSceneManager().ChangeScene(SceneManager::SceneName::GameOver);
+	}
+
+	bool SceneGameplay::levelFinished() const
+	{
+		// if there are bricks other than impenetrable remaining
+		std::vector<Entity*> bricks = entityManager.GetEntitiesWithComponent<BrickComponent>();
+		for (Entity *const &brick : bricks)
+		{
+			if (entityManager.GetComponent<BrickComponent>(*brick).GetBrickType().GetHitPoints() != -1)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	void SceneGameplay::AddScore(int points)
+	{
+		score += points;
+		updateHUD("scoreHUD", "Score: " + std::to_string(score));
 	}
 }

@@ -11,14 +11,17 @@ namespace breakout
 	class MovementSystem : public System
 	{
 	public:
-		explicit MovementSystem(const Game &game);
+		explicit MovementSystem(Game &game);
 		virtual ~MovementSystem();
+		MovementSystem(const MovementSystem&) = delete;
+		void operator=(const MovementSystem&) = delete;
 
-		void update(double time);
-		void onEvent(const SDL_Event& event);
-		void resetPositions();
+		void OnEvent(const SDL_Event &event);
+		void Update(double time) const;
 
-		void setScene(SceneGameplay &scene) { gameplayScene = &scene; }
+		void ResetPositions() const;
+
+		void SetScene(SceneGameplay &scene) { gameplayScene = &scene; }
 
 	private:
 		SceneGameplay* gameplayScene;

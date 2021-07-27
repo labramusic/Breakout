@@ -10,7 +10,7 @@ namespace breakout
 	class Component
 	{
 	public:
-		static ComponentTypeID getNewComponentTypeID()
+		static ComponentTypeID GetNewComponentTypeID()
 		{
 			static ComponentTypeID lastID = 0ull;
 			return lastID++;
@@ -18,11 +18,11 @@ namespace breakout
 
 		// return same id for existing components
 		template <typename C>
-		static ComponentTypeID getComponentTypeID() noexcept
+		static ComponentTypeID GetComponentTypeID() noexcept
 		{
 			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
 			
-			static ComponentTypeID typeID = getNewComponentTypeID();
+			static ComponentTypeID typeID = GetNewComponentTypeID();
 			return typeID;
 		}
 

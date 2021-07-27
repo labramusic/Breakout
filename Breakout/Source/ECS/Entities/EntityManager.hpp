@@ -17,25 +17,28 @@ namespace breakout
 	public:
 		EntityManager();
 		~EntityManager();
+		EntityManager(const EntityManager&) = delete;
+		void operator=(const EntityManager&) = delete;
 
-		Entity *getEntityByTag(const std::string &tag);
-		void refresh();
-		void removeEntity(Entity &entity);
+		Entity *GetEntityByTag(const std::string &tag);
+		void Refresh();
 
 		template <typename C>
-		C& getComponent(const Entity& entity)
+		C &GetComponent(const Entity &entity)
 		{
 			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
-			assert(hasComponent<C>(entity));
+			assert(HasComponent<C>(entity));
 
-			Component* p = componentsByClass[Component::getComponentTypeID<C>()][entity.getId()].get();
+			Component *p = componentsByClass[Component::GetComponentTypeID<C>()][entity.getId()].get();
 			return *static_cast<C*>(p);
 		}
 
 		template <typename C>
-		bool hasComponent(const Entity& entity)
+		bool HasComponent(const Entity &entity)
 		{
-			auto cId = Component::getComponentTypeID<C>();
+			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
+
+			ComponentTypeID cId = Component::GetComponentTypeID<C>();
 			if (componentsByClass.find(cId) != componentsByClass.end())
 			{
 				return componentsByClass[cId].find(entity.getId()) != componentsByClass[cId].end();
@@ -44,17 +47,19 @@ namespace breakout
 		}
 				
 		template <typename C>
-		std::vector<Entity*> getEntitiesWithComponent()
+		std::vector<Entity*> GetEntitiesWithComponent()
 		{
 			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
 
 			std::vector<Entity*> entitiesWithComponent;
-			auto cId = Component::getComponentTypeID<C>();
+			ComponentTypeID cId = Component::GetComponentTypeID<C>();
 			if (componentsByClass.find(cId) != componentsByClass.end())
 			{
 				for (auto it = componentsByClass[cId].begin(); it != componentsByClass[cId].end(); ++it)
 				{
-					entitiesWithComponent.push_back(entities[it->first].get());
+					Entity &e = *entities[it->first];
+					if (!e.IsActive()) continue;
+					entitiesWithComponent.push_back(&e);
 				}
 			}
 			
@@ -68,14 +73,15 @@ namespace breakout
 
 		EntityID generateNewId();
 		Entity &createEntity(const std::string &tag = "");
+		void removeEntityComponents(Entity &entity);
 
 		template <typename C, typename... CArgs>
-		C& addComponent(Entity& entity, CArgs&&... cArgs)
+		C& addComponent(Entity &entity, CArgs&&... cArgs)
 		{
 			static_assert(std::is_base_of<Component, C>::value, "C must inherit from Component.");
-			assert(!hasComponent<C>(entity));
+			assert(!HasComponent<C>(entity));
 
-			auto cId = Component::getComponentTypeID<C>();
+			ComponentTypeID cId = Component::GetComponentTypeID<C>();
 			if (componentsByClass.find(cId) == componentsByClass.end())
 			{
 				componentsByClass[cId] = std::unordered_map<EntityID, std::unique_ptr<Component>>{};

@@ -12,19 +12,21 @@ namespace breakout
 	class CollisionSystem : public System
 	{
 	public:
-		explicit CollisionSystem(const Game &game);
+		explicit CollisionSystem(Game &game);
 		virtual ~CollisionSystem();
+		CollisionSystem(const CollisionSystem&) = delete;
+		void operator=(const CollisionSystem&) = delete;
 
-		void update(double time);
-		void onEvent(const SDL_Event& event);
+		void OnEvent(const SDL_Event &event) const;
+		void Update(double time) const;
 
-		void setScene(SceneGameplay& scene) { gameplayScene = &scene; }
+		void SetScene(SceneGameplay &scene) { gameplayScene = &scene; }
 
 	private:
-		bool checkBallCollision(const TransformComponent& t1, const TransformComponent& t2) const;
-		bool paddleTopCollision(const TransformComponent& ballTr, const TransformComponent& paddleTr) const;
-		void handleBallCollisionWithBrick(const TransformComponent& ballTr, MoveComponent& ballM, const TransformComponent& brickTr) const;
-		void handleBallCollisionWithPaddle(const TransformComponent& ballTr, MoveComponent& ballM, const TransformComponent& paddleTr) const;
+		static bool checkBallCollision(const TransformComponent &t1, const TransformComponent &t2);
+		static bool paddleTopCollision(const TransformComponent &ballTr, const TransformComponent &paddleTr);
+		static void handleBallCollisionWithBrick(const TransformComponent &ballTr, MoveComponent &ballM, const TransformComponent &brickTr) ;
+		static void handleBallCollisionWithPaddle(const TransformComponent &ballTr, MoveComponent &ballM, const TransformComponent &paddleTr) ;
 
 		SceneGameplay* gameplayScene;
 	};

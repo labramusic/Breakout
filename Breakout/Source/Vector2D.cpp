@@ -56,15 +56,6 @@ namespace breakout
 		return *this;
 	}
 
-
-	Vector2D& Vector2D::Zero()
-	{
-		this->x = 0.f;
-		this->y = 0.f;
-
-		return *this;
-	}
-
 	Vector2D operator+(Vector2D v1, const Vector2D& v2)
 	{
 		v1 += v2;

@@ -6,38 +6,35 @@
 #include <Game.hpp>
 #include <AssetManager.hpp>
 
-
 namespace breakout
 {
-	RenderSystem::RenderSystem(const Game &game) : System(game)
+	RenderSystem::RenderSystem(Game &game) : System(game), assetManager(game.GetAssetManager())
 	{
 	}
 
 	RenderSystem::~RenderSystem() {}
 
-	void RenderSystem::update()
+	void RenderSystem::Update() const
 	{
 		SDL_Rect srcRect, destRect;
 		srcRect.x = srcRect.y = 0;
 
-		auto entities = entityManager.getEntitiesWithComponent<TransformComponent>();
-		for (auto const& entity : entities)
+		std::vector<Entity*> entities = entityManager.GetEntitiesWithComponent<TransformComponent>();
+		for (Entity* const &entity : entities)
 		{
-			const auto& transform = entityManager.getComponent<TransformComponent>(*entity);
-			if (!entityManager.hasComponent<RenderComponent>(*entity)) continue;
-			const auto& render = entityManager.getComponent<RenderComponent>(*entity);
+			const TransformComponent &transform = entityManager.GetComponent<TransformComponent>(*entity);
+			if (!entityManager.HasComponent<RenderComponent>(*entity)) continue;
+			const RenderComponent &render = entityManager.GetComponent<RenderComponent>(*entity);
 
-			srcRect.w = transform.width;
-			srcRect.h = transform.height;
+			srcRect.w = transform.GetWidth();
+			srcRect.h = transform.GetHeight();
 			
-			destRect.x = static_cast<int>(transform.position.x);
-			destRect.y = static_cast<int>(transform.position.y);
-			destRect.w = transform.width * transform.scale;
-			destRect.h = transform.height * transform.scale;
+			destRect.x = static_cast<int>(transform.GetPosition().x);
+			destRect.y = static_cast<int>(transform.GetPosition().y);
+			destRect.w = transform.GetWidth() * transform.GetScale();
+			destRect.h = transform.GetHeight() * transform.GetScale();
 
-			// TODO ref
-			// tko crta tu ??? system bi trebao
-			game.getAssetManager().Draw(render.tId, srcRect, destRect);
+			assetManager.Draw(render.GetTId(), srcRect, destRect);
 		}
 	}
 }

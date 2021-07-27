@@ -9,39 +9,47 @@
 namespace breakout
 {
 	class Level;
+	class EntityManager;
 	class MovementSystem;
 	class CollisionSystem;
 
 	class SceneGameplay : public Scene
 	{
 	public:
-		SceneGameplay(const Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem);
+		SceneGameplay(Game &game, MovementSystem &movementSystem, CollisionSystem &collisionSystem, RenderSystem &renderSystem);
 		virtual ~SceneGameplay();
 
-		void handleEvent(const SDL_Event &event) override;
-		void update(double time) override;
-		void render() override;
+		void HandleEvent(const SDL_Event &event) override;
+		void Update(double time) override;
+		void Render() override;
 		
-		void loadScene() override;
-		void unloadScene() override;
+		void LoadScene() override;
+		void UnloadScene() override;
 
-		void loadLevel();
-		void unloadLevel();
-
-		void nextLevel();
-		void gameOver();
-
-		void updateHUD(const std::string& tag, const std::string& text);
-
-		int score = 0;
-		int lives = 3;
+		void LoseLife();
+		void AddScore(int points);
 
 	private:
-		int currentLevelIndex = 0;
-		std::vector<std::unique_ptr<Level>> levels;
+		EntityManager &entityManager;
 		
 		// runtime systems
 		MovementSystem &movementSystem;
 		CollisionSystem &collisionSystem;
+
+		int currentLevelIndex = 0;
+		std::vector<std::unique_ptr<Level>> levels;
+		
+		bool isGameOver;
+		int score = 0;
+		int lives = 3;
+
+		void loadLevel();
+		void unloadLevel() const;
+		
+		bool levelFinished() const;
+		void nextLevel();
+		void gameOver();
+
+		void updateHUD(const std::string &tag, const std::string &text) const;
 	};
 }

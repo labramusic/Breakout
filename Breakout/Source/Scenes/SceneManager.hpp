@@ -4,7 +4,6 @@
 #include <memory>
 #include <SDL_events.h>
 
-
 namespace breakout
 {
 	class Game;
@@ -16,18 +15,20 @@ namespace breakout
 	public:
 		enum class SceneName { Main, Gameplay, GameOver };
 
-		explicit SceneManager(const Game &game);
+		explicit SceneManager(Game &game);
 		~SceneManager();
-		
-		void update(double time);
-		void render();
-		void handleEvent(const SDL_Event& event);
-		void changeScene(const SceneName newScene);
+		SceneManager(const SceneManager&) = delete;
+		void operator=(const SceneManager&) = delete;
 
-		//Scene& getActiveScene() const { return *activeScene; }
+		void Update(double time);
+		void Render();
+		void HandleEvent(const SDL_Event& event);
+		void ChangeScene(SceneName newScene);
+
+		Scene &GetActiveScene() const { return *activeScene; }
 		
 	private:
-		const Game &game;
+		Game &game;
 
 		std::unordered_map<SceneName, std::unique_ptr<Scene>> scenes;
 		std::vector<std::unique_ptr<System>> systems;

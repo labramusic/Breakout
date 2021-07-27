@@ -4,12 +4,19 @@
 
 namespace breakout
 {
+	class AssetManager;
+
 	class RenderSystem : public System
 	{
 	public:
-		explicit RenderSystem(const Game &game);
+		explicit RenderSystem(Game &game);
 		virtual ~RenderSystem();
+		RenderSystem(const RenderSystem&) = delete;
+		void operator=(const RenderSystem&) = delete;
 		
-		void update();
+		void Update() const;
+
+	private:
+		AssetManager &assetManager;
 	};
 }

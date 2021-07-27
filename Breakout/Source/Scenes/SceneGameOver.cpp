@@ -6,10 +6,11 @@
 #include <ECS/Systems/RenderSystem.hpp>
 
 #include "SceneManager.hpp"
+#include <AssetManager.hpp>
 
 namespace breakout
 {
-	SceneGameOver::SceneGameOver(const Game &game, RenderSystem& renderSystem) : Scene(game, renderSystem)
+	SceneGameOver::SceneGameOver(Game &game, RenderSystem &renderSystem) : Scene(game, renderSystem)
 	{
 	}
 
@@ -17,43 +18,40 @@ namespace breakout
 	{
 	}
 
-	void SceneGameOver::handleEvent(const SDL_Event& event)
+	void SceneGameOver::HandleEvent(const SDL_Event &event)
 	{
-		Scene::handleEvent(event);
+		Scene::HandleEvent(event);
 
 		if (event.type == SDL_KEYUP)
 		{
 			if (event.key.keysym.sym == SDLK_SPACE)
 			{
 				// restart game
-				game.getSceneManager().changeScene(SceneManager::SceneName::Gameplay);
+				game.GetSceneManager().ChangeScene(SceneManager::SceneName::Gameplay);
 			}
 		}
 	}
 
-	void SceneGameOver::update(double time)
+	void SceneGameOver::Update(double time)
 	{
 	}
 
-	void SceneGameOver::render()
+	void SceneGameOver::Render()
 	{
-		// TODO once?
-		//Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
+		game.GetAssetManager().DrawBackground(std::string("1"));
 
-		renderSystem.update();
+		renderSystem.Update();
 	}
 
-	void SceneGameOver::loadScene()
+	void SceneGameOver::LoadScene()
 	{
-		//Game::instance().getAssetManager().DrawBackground(levels[currentLevelIndex]->levelId);
-
-		SDL_Color white = { 255, 255, 255, 255 };
-		game.getEntityFactory().createLabel("gameOverText", 350, 200, "GAME OVER", white);
-		game.getEntityFactory().createLabel("restartText", 315, 250, "Press Space to restart", white);
+		const SDL_Color white = { 255, 255, 255, 255 };
+		game.GetEntityFactory().CreateLabel("gameOverText", 350.f, 200.f, "GAME OVER", white);
+		game.GetEntityFactory().CreateLabel("restartText", 315.f, 250.f, "Press Space to restart", white);
 	}
 
-	void SceneGameOver::unloadScene()
+	void SceneGameOver::UnloadScene()
 	{
-		game.getEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
+		game.GetEntityFactory().destroyEntitiesWithComponent<TransformComponent>();
 	}
 }

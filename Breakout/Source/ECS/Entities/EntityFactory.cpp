@@ -11,50 +11,53 @@
 
 namespace breakout
 {
-	EntityFactory::EntityFactory(const Game &game) : game(game), manager(game.getEntityManager())
+	EntityFactory::EntityFactory(Game &game) : game(game), manager(game.GetEntityManager())
 	{
 	}
 
-	Entity& EntityFactory::createPaddle() const
+	Entity &EntityFactory::CreatePaddle() const
 	{
 		Entity& paddleEntity(manager.createEntity("paddle"));
-		const auto w = game.getWindowWidth();
-		manager.addComponent<TransformComponent>(paddleEntity, (w-90.f)/2, 610.f, 90.f, 15.f);
+		const int w = game.GetWindowWidth();
+		manager.addComponent<TransformComponent>(paddleEntity, (static_cast<float>(w) - 90.f) / 2.f, 610.f, 90.f, 15.f);
 		manager.addComponent<MoveComponent>(paddleEntity, 4);
 		manager.addComponent<RenderComponent>(paddleEntity, "paddle");
 		return paddleEntity;
 	}
 
-	Entity& EntityFactory::createBall() const
+	Entity &EntityFactory::CreateBall() const
 	{
-		auto& ballEntity(manager.createEntity("ball"));
-		const auto w = game.getWindowWidth();
-		manager.addComponent<TransformComponent>(ballEntity, (w-10.f)/2, 580.f, 10.f, 10.f);
-		manager.addComponent<MoveComponent>(ballEntity, Vector2D(0, -1), 5);
+		Entity &ballEntity(manager.createEntity("ball"));
+		const int w = game.GetWindowWidth();
+		manager.addComponent<TransformComponent>(ballEntity, (static_cast<float>(w) - 10.f) / 2.f, 580.f, 10.f, 10.f);
+		manager.addComponent<MoveComponent>(ballEntity, Vector2D(0.f, -1.f), 5);
 		manager.addComponent<RenderComponent>(ballEntity, "ball");
 		return ballEntity;
 	}
 
-	Entity& EntityFactory::createBrick(const BrickType& brickType, float x, float y, float w, float h) const
+	Entity &EntityFactory::CreateBrick(const BrickType &brickType, float x, float y, float w, float h) const
 	{
-		auto& brickEntity(manager.createEntity("brick"));
+		Entity &brickEntity(manager.createEntity("brick"));
 		manager.addComponent<TransformComponent>(brickEntity, x, y, w, h);
-		manager.addComponent<RenderComponent>(brickEntity, brickType.textureId);
+		manager.addComponent<RenderComponent>(brickEntity, brickType.GetTextureId());
 		manager.addComponent<BrickComponent>(brickEntity, brickType);
 		return brickEntity;
 	}
 
-	Entity& EntityFactory::createLabel(const std::string& tag, float x, float y, const std::string& text, SDL_Color color) const
+	Entity &EntityFactory::CreateLabel(const std::string &tag, float x, float y, const std::string &text, SDL_Color color) const
 	{
-		auto& labelEntity(manager.createEntity(tag));
+		Entity &labelEntity(manager.createEntity(tag));
 		manager.addComponent<TransformComponent>(labelEntity, x, y);
-		auto& transform = manager.getComponent<TransformComponent>(labelEntity);
+		TransformComponent &transform = manager.GetComponent<TransformComponent>(labelEntity);
 		
 		manager.addComponent<TextComponent>(labelEntity, text, "gameFont", color);
-		auto& textC = manager.getComponent<TextComponent>(labelEntity);
-		SDL_Texture* tex = game.getAssetManager().CreateTextureFromText(textC.fontId, text, color);
-		game.getAssetManager().addTexture(tag, *tex);
-		SDL_QueryTexture(tex, nullptr, nullptr, &transform.width, &transform.height);
+		TextComponent &textC = manager.GetComponent<TextComponent>(labelEntity);
+		SDL_Texture *tex = game.GetAssetManager().CreateTextureFromText(textC.GetFontId(), text, color);
+		game.GetAssetManager().AddTexture(tag, *tex);
+		int w, h;
+		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+		transform.SetWidth(w);
+		transform.SetHeight(h);
 
 		manager.addComponent<RenderComponent>(labelEntity, tag);
 		return labelEntity;

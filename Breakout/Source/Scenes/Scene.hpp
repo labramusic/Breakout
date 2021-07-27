@@ -12,17 +12,17 @@ namespace breakout
 	public:
 		virtual ~Scene();
 
-		virtual void handleEvent(const SDL_Event& event);
-		virtual void update(double time) = 0;
-		virtual void render() = 0;
+		virtual void HandleEvent(const SDL_Event& event);
+		virtual void Update(double time) = 0;
+		virtual void Render() = 0;
 		
-		virtual void loadScene() = 0;
-		virtual void unloadScene() = 0;
+		virtual void LoadScene() = 0;
+		virtual void UnloadScene() = 0;
 
 	protected:
-		Scene(const Game &game, RenderSystem &renderSystem);
-		const Game &game;
+		Scene(Game &game, RenderSystem &renderSystem);
 
+		Game &game;
 		RenderSystem &renderSystem;
 	};
 }

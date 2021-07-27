@@ -11,7 +11,7 @@
 
 namespace breakout
 {
-	MovementSystem::MovementSystem(const Game &game) : System(game), gameplayScene(nullptr)
+	MovementSystem::MovementSystem(Game &game) : System(game), gameplayScene(nullptr)
 	{
 	}
 
@@ -19,77 +19,66 @@ namespace breakout
 	{
 	}
 
-	void MovementSystem::update(double time)
+	void MovementSystem::Update(double time) const
 	{
-		// TODO for each entity with move component apply movement
-		// depending on transform component, clamp, bounciness etc.
-
 		// move paddle
-		const auto* paddle = entityManager.getEntityByTag("paddle");
-		auto& paddleTransform = entityManager.getComponent<TransformComponent>(*paddle);
-		auto& paddleMove = entityManager.getComponent<MoveComponent>(*paddle);
+		const Entity *paddle = entityManager.GetEntityByTag("paddle");
+		TransformComponent &paddleTransform = entityManager.GetComponent<TransformComponent>(*paddle);
+		MoveComponent &paddleMove = entityManager.GetComponent<MoveComponent>(*paddle);
 
-		if (movingLeft) paddleMove.velocity.x = -1;
-		else if (movingRight) paddleMove.velocity.x = 1;
-		else paddleMove.velocity.x = 0;
+		if (movingLeft) paddleMove.SetVelocityX(-1.f);
+		else if (movingRight) paddleMove.SetVelocityX(1.f);
+		else paddleMove.SetVelocityX(0.f);
 
-		paddleTransform.position += paddleMove.movementSpeed * paddleMove.velocity.Normalize() * time;
+		paddleTransform.SetPosition(paddleTransform.GetPosition()
+			+ paddleMove.GetMovementSpeed() * paddleMove.GetVelocity().Normalize() * time);
 
 		// clamp to screen
-		if (paddleTransform.position.x < 0) paddleTransform.position.x = 0;
-		if (paddleTransform.position.x + paddleTransform.width > game.getWindowWidth())
-			paddleTransform.position.x = game.getWindowWidth() - paddleTransform.width;
-
+		if (paddleTransform.GetPosition().x < 0) paddleTransform.SetPositionX(0.f);
+		if (paddleTransform.GetPosition().x + paddleTransform.GetWidth() > game.GetWindowWidth())
+			paddleTransform.SetPositionX(static_cast<float>(game.GetWindowWidth() - paddleTransform.GetWidth()));
 		
 		// move ball
-		const auto* ball = entityManager.getEntityByTag("ball");
-		auto& ballTransform = entityManager.getComponent<TransformComponent>(*ball);
-		auto& ballMove = entityManager.getComponent<MoveComponent>(*ball);
-		ballTransform.position += ballMove.movementSpeed * ballMove.velocity.Normalize() * time;
+		const Entity *ball = entityManager.GetEntityByTag("ball");
+		TransformComponent &ballTransform = entityManager.GetComponent<TransformComponent>(*ball);
+		MoveComponent &ballMove = entityManager.GetComponent<MoveComponent>(*ball);
+
+		ballTransform.SetPosition(ballTransform.GetPosition() 
+			+ ballMove.GetMovementSpeed() * ballMove.GetVelocity().Normalize() * time);
 
 		// hits borders
-		if (ballTransform.position.x < 0 || ballTransform.position.x + ballTransform.width > game.getWindowWidth())
+		if (ballTransform.GetPosition().x <= 0 || ballTransform.GetPosition().x + ballTransform.GetWidth() >= game.GetWindowWidth())
 		{
-			ballMove.velocity.x *= -1;
+			ballMove.SetVelocityX(-ballMove.GetVelocity().x);
 		}
-		if (ballTransform.position.y < 25)
+		if (ballTransform.GetPosition().y < 25)
 		{
-			ballMove.velocity.y *= -1;
+			ballMove.SetVelocityY(-ballMove.GetVelocity().y);
 		}
 
 		// out of bounds
-		if (ballTransform.position.y + ballTransform.height > game.getWindowHeight())
+		if (ballTransform.GetPosition().y + ballTransform.GetHeight() > game.GetWindowHeight())
 		{
-			resetPositions();
-			
-			--gameplayScene->lives;
-			if (gameplayScene->lives == 0)
-			{
-				gameplayScene->gameOver();
-			}
-			else
-			{
-				gameplayScene->updateHUD("livesHUD", "Lives: " + std::to_string(gameplayScene->lives));
-			}
+			ResetPositions();
+			gameplayScene->LoseLife();
 		}
-
 	}
 
-	void MovementSystem::resetPositions()
+	void MovementSystem::ResetPositions() const
 	{
-		const Entity& paddle = *entityManager.getEntityByTag("paddle");
-		const Entity& ball = *entityManager.getEntityByTag("ball");
-		TransformComponent &paddleTr = entityManager.getComponent<TransformComponent>(paddle);
-		TransformComponent &ballTr = entityManager.getComponent<TransformComponent>(ball);
-		paddleTr.position = paddleTr.initialPos;
-		ballTr.position = ballTr.initialPos;
+		const Entity &paddle = *entityManager.GetEntityByTag("paddle");
+		const Entity &ball = *entityManager.GetEntityByTag("ball");
 
-		entityManager.getComponent<MoveComponent>(paddle).velocity.Zero();
-		entityManager.getComponent<MoveComponent>(ball).velocity = Vector2D(0, -1);
+		TransformComponent &paddleTr = entityManager.GetComponent<TransformComponent>(paddle);
+		TransformComponent &ballTr = entityManager.GetComponent<TransformComponent>(ball);
+		paddleTr.SetPosition(paddleTr.GetInitialPos());
+		ballTr.SetPosition(ballTr.GetInitialPos());
+
+		entityManager.GetComponent<MoveComponent>(paddle).SetVelocity(Vector2D(0.f, 0.f));
+		entityManager.GetComponent<MoveComponent>(ball).SetVelocity(Vector2D(0.f, -1.f));
 	}
 
-	// input system/component ?
-	void MovementSystem::onEvent(const SDL_Event& event)
+	void MovementSystem::OnEvent(const SDL_Event &event)
 	{
 		if (event.type == SDL_KEYDOWN)
 		{

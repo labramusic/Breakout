@@ -2,6 +2,7 @@
 
 #include <string>
 #include <tinyxml.h>
+#include <string>
 
 namespace breakout
 {
@@ -14,16 +15,24 @@ namespace breakout
 
 			const char *hp = node.Attribute("HitPoints");
 			if (std::strcmp(hp, "Infinite") == 0) hitPoints = -1;
-			else hitPoints = atoi(hp);
+			else hitPoints = std::stoi(hp);
 
 			// TODO sounds
 			if (node.Attribute("BreakSound"))
 				breakSoundId = node.Attribute("BreakSound");
 
 			if (node.Attribute("BreakScore"))
-				breakScore = atoi(node.Attribute("BreakScore"));
+				breakScore = std::stoi(node.Attribute("BreakScore"));
 		}
 
+		char GetId() const { return id; }
+		std::string GetTextureId() const { return textureId; }
+		int GetHitPoints() const { return hitPoints; }
+		std::string GetHitSoundId() const { return hitSoundId; }
+		std::string GetBreakSoundId() const { return breakSoundId; }
+		int GetBreakScore() const { return breakScore; }
+
+	private:
 		char id;
 		std::string textureId;
 		int hitPoints;

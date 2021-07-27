@@ -14,7 +14,7 @@
 
 namespace breakout
 {
-	SceneManager::SceneManager(const Game &game) : game(game)
+	SceneManager::SceneManager(Game &game) : game(game)
 	{
 		// initialize systems
 		RenderSystem *renderSystem = new RenderSystem(game);
@@ -30,16 +30,16 @@ namespace breakout
 		systems.push_back(std::move(cs));
 
 		scenes.emplace(SceneName::Main, new SceneMain(game, *renderSystem));
-		SceneGameplay* gameplayScene = new SceneGameplay(game, *movementSystem, *collisionSystem, *renderSystem);
+		SceneGameplay *gameplayScene = new SceneGameplay(game, *movementSystem, *collisionSystem, *renderSystem);
 		scenes.emplace(SceneName::Gameplay, gameplayScene);
 		scenes.emplace(SceneName::GameOver, new SceneGameOver(game, *renderSystem));
 
-		movementSystem->setScene(*gameplayScene);
-		collisionSystem->setScene(*gameplayScene);
+		movementSystem->SetScene(*gameplayScene);
+		collisionSystem->SetScene(*gameplayScene);
 
 		// set main scene as active
 		activeScene = scenes[SceneName::Main].get();
-		activeScene->loadScene();
+		activeScene->LoadScene();
 	}
 
 	SceneManager::~SceneManager()
@@ -47,25 +47,25 @@ namespace breakout
 		std::cout << "calling destructor of scene manager" << std::endl;
 	}
 
-	void SceneManager::update(double time)
+	void SceneManager::Update(double time)
 	{
-		activeScene->update(time);
+		activeScene->Update(time);
 	}
 
-	void SceneManager::render()
+	void SceneManager::Render()
 	{
-		activeScene->render();
+		activeScene->Render();
 	}
 
-	void SceneManager::handleEvent(const SDL_Event& event)
+	void SceneManager::HandleEvent(const SDL_Event &event)
 	{
-		activeScene->handleEvent(event);
+		activeScene->HandleEvent(event);
 	}
 
-	void SceneManager::changeScene(const SceneName newScene)
+	void SceneManager::ChangeScene(SceneName newScene)
 	{
-		activeScene->unloadScene();
+		activeScene->UnloadScene();
 		activeScene = scenes[newScene].get();
-		activeScene->loadScene();
+		activeScene->LoadScene();
 	}
 }

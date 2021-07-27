@@ -11,25 +11,29 @@ namespace breakout
 		std::cout << "calling destructor of entity manager" << std::endl;
 	}
 
-	Entity *EntityManager::getEntityByTag(const std::string &tag)
+	Entity *EntityManager::GetEntityByTag(const std::string &tag)
 	{
-		for (auto &entity : entities)
+		for (std::unique_ptr<Entity> &entity : entities)
 		{
-			if (entity && entity->getTag() == tag)
+			if (entity && entity->IsActive() && entity->getTag() == tag)
 				return entity.get();
 		}
 		return nullptr;
 	}
 
-	void EntityManager::refresh()
+	void EntityManager::Refresh()
 	{
-		for (auto &entity : entities)
+		for (std::unique_ptr<Entity> &entity : entities)
 		{
-			if (entity && !entity->active) entity.reset();
+			if (entity && !entity->IsActive())
+			{
+				removeEntityComponents(*entity);
+				entity.reset();
+			}
 		}
 	}
 
-	void EntityManager::removeEntity(Entity &entity)
+	void EntityManager::removeEntityComponents(Entity &entity)
 	{
 		for (auto it = componentsByClass.begin(); it != componentsByClass.end(); ++it) {
 			auto entityComponent = it->second.find(entity.getId());
@@ -38,8 +42,6 @@ namespace breakout
 				it->second.erase(entityComponent);
 			}
 		}
-
-		entities[entity.getId()]->active = false;
 	}
 
 	EntityID EntityManager::generateNewId()

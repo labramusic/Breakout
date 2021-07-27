@@ -7,9 +7,11 @@ namespace breakout
 	class RenderComponent : public Component
 	{
 	public:
-		RenderComponent(const std::string tId) : tId(tId) {}
+		RenderComponent(std::string tId) : tId(std::move(tId)) {}
 
+		std::string GetTId() const { return tId; }
+		
+	private:
 		std::string tId;
 	};
-
 }
