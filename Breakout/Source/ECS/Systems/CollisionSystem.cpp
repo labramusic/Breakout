@@ -5,7 +5,6 @@
 #include <ECS/Entities/EntityManager.hpp>
 #include <ECS/Components/TransformComponent.hpp>
 #include <ECS/Components/BrickComponent.hpp>
-#include <ECS/Components/TextComponent.hpp>
 #include <ECS/Components/MoveComponent.hpp>
 #include <Game.hpp>
 

@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include "EntityManager.hpp"
-#include <SDL.h>
 #include <SDL_pixels.h>
-#include <cassert>
 
 namespace breakout
 {

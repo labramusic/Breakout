@@ -44,7 +44,6 @@ C:\Users\labra\source\repos\Breakout\Breakout\Source\Vector2D.hpp(24,1): warning
               T=double
           ]
   RenderSystem.cpp
-  System.cpp
   Game.cpp
   Scene.cpp
   SceneGameOver.cpp

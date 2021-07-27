@@ -1,8 +1,8 @@
 ﻿#include "AssetManager.hpp"
 
+#include <SDL_image.h>
 #include <filesystem>
 #include <tinyxml.h>
-#include <direct.h>
 
 #include "Game.hpp"
 #include "Level.hpp"
